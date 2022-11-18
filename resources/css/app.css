@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+    .did-floating-select:not([value=""]) ~ .did-floating-label,
+    .did-floating-select:focus ~ .did-floating-label {
+        @apply top-[-10px] text-[12px];
+    }
+
+    .did-floating-select:focus ~ .did-floating-label {
+        @apply text-current;
+    }
+}
+
+@layer components {
+    .select-wrapper {
+        @apply relative text-blue-600;
+    }
+}
