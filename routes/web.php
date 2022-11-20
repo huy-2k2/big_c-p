@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\ChangePasswordController;
 use App\Http\Controllers\Users\AdminController;
 use App\Http\Controllers\Users\FactoryController;
 use App\Http\Controllers\Users\VendorController;
@@ -28,6 +29,8 @@ Route::group(['middleware' => ['auth', 'verified', 'accepted']], function () {
     Route::get('factory', [FactoryController::class, 'index']);
     Route::get('warranty_center', [WarrantyCenterController::class, 'index']);
     Route::get('vendor', [VendorController::class, 'index']);
+
+    Route::post('password/change', [ChangePasswordController::class, 'index'])->name('password.change');
 });
 
 

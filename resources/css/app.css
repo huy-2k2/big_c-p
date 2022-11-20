@@ -11,10 +11,49 @@
     .did-floating-select:focus ~ .did-floating-label {
         @apply text-current;
     }
+
+    #sidebar.not-active {
+        @apply -translate-x-full lg:w-[70px] lg:-translate-x-0;
+    }
+
+    #sidebar.not-active .sidebar-hidden {
+        @apply lg:hidden;
+    }
+
+    .sidebar-item.active .sidebar-toggle-child {
+        @apply rotate-90;
+    }
+    .sidebar-item.active + .sidebar-children {
+        @apply block;
+    }
+
+    #user-toggle.active + #user-menu {
+        @apply block;
+    }
+
+    #account-info.active {
+        @apply block;
+    }
+
+    #change-password-form.active {
+        @apply block;
+    }
 }
 
 @layer components {
     .select-wrapper {
         @apply relative text-blue-600;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+        @apply w-[5px];
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        @apply bg-purple-100;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        @apply bg-purple-400 rounded-full;
     }
 }

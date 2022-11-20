@@ -11,7 +11,7 @@
             <p>tài khoản của bạn đang chờ quản trị viên phê duyệt, mọi thắc mắc vui lòng liên hệ qua số điện thoại: @include('components.link', ['text' => '0365057487', 'href' => 'tel:0365057487']) </p>
           <form action="{{ route('logout') }}" method="POST">
                 @csrf
-                <button class="inline px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-blue-600 border border-transparent rounded-lg shadow focus:outline-none focus:shadow-outline-blue active:bg-blue-600 hover:bg-blue-700">Quay về trang chủ</button>
+                <button class="inline px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-blue-600 border border-transparent rounded-lg shadow focus:outline-none focus:shadow-outline-blue active:bg-blue-600 hover:bg-blue-700">Quay về trang chủ    </button>
           </form>
     </div>
       <div class="max-w-lg">

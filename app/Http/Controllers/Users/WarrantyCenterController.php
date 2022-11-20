@@ -14,6 +14,6 @@ class WarrantyCenterController extends Controller
 
     public function index()
     {
-        return 'trang chủ warranty center';
+        return view('warranty_center.main');
     }
 }

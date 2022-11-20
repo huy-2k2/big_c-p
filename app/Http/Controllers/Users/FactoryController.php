@@ -14,6 +14,6 @@ class FactoryController extends Controller
 
     public function index()
     {
-        return 'trang chủ factory';
+        return view('factory.main');
     }
 }

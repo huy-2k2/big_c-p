@@ -14,6 +14,6 @@ class AdminController extends Controller
 
     public function index()
     {
-        return 'trang chủ admin';
+        return view('admin.main');
     }
 }

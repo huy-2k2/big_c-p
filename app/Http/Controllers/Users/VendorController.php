@@ -14,6 +14,6 @@ class VendorController extends Controller
 
     public function index()
     {
-        return 'trang chủ vendor';
+        return view('vendor.main');
     }
 }

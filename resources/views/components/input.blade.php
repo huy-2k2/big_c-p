@@ -12,6 +12,7 @@
     @error($name)
         @include('components.text_notice', ['text' => $message])
     @enderror
+    
 </div>
 
 @if (isset($type) && $type == 'password')    
