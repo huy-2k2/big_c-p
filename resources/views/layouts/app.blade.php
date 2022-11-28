@@ -4,6 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         @vite('resources/css/app.css')
+        @vite('resources/js/app.js')
         <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0- 
         alpha/css/bootstrap.css" rel="stylesheet">
        
@@ -13,6 +14,8 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
        
        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+       <script src="{{ url('fetch_data.js') }}"></script>
+       <script src="{{ url('frontend.js') }}"></script>
       </head>
 <body>
     <div id="app">

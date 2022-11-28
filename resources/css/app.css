@@ -27,7 +27,7 @@
         @apply block;
     }
 
-    #user-toggle.active + #user-menu {
+    #user-menu.active {
         @apply block;
     }
 
@@ -36,6 +36,52 @@
     }
 
     #change-password-form.active {
+        @apply block;
+    }
+
+    #notifi-menu.active {
+        @apply block;
+    }
+
+    #notifi-menu.readed #notifi-menu-readed {
+        @apply block;
+    }
+
+    #notifi-menu.readed #notifi-menu-not-readed {
+        @apply hidden;
+    }
+
+    #notifi-menu.readed #get-readed,
+    #notifi-menu:not(.readed) #get-not-readed {
+        @apply text-blue-800 underline;
+    }
+
+    .notification-detail.active {
+        @apply block;
+    }
+
+    .select-user-list.active + .select-user {
+        @apply border-blue-500;
+    }
+
+    .select-user-list.active {
+        @apply block;
+    }
+
+    .select-user-list.active + .select-user .select-user-label,
+    .select-user.valid .select-user-label {
+        @apply top-0 left-0 text-blue-500 scale-75;
+    }
+
+    .select-user-list.active + .select-user .select-user-icon {
+        @apply rotate-180;
+    }
+
+    .select-user-list .select-choose.active {
+        @apply underline;
+    }
+
+    .account-detail.active {
         @apply block;
     }
 }

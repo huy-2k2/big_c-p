@@ -1,7 +1,7 @@
 <div class="flex flex-col gap-y-1">
     <div class="select-wrapper">
         <select id='input-select-{{ $name }}' class="block w-full px-3 text-sm text-black bg-white border border-gray-300 rounded-lg appearance-none peer did-floating-select h-11 focus:border-blue-600 focus:outline-none" onclick="this.setAttribute('value', this.value);" onchange="this.setAttribute('value', this.value);" value=""  name={{ $name }}>
-            <option class="hidden"></option>
+            <option hidden></option>
             @foreach ($options as $option)
                 <option value={{ $option['value'] }}>{{ $option['title'] }}</option>
             @endforeach
@@ -17,13 +17,5 @@
 </div>
 
 @if(old($name))
-    <script>
-        const input_select_{{ $name }} = document.querySelector('#input-select-{{ $name }}')
-        input_select_{{ $name }}.querySelectorAll('option').forEach(option => {
-        if(option.value == "{{ old($name) }}") {
-            option.setAttribute('selected', 'selected')
-            input_select_{{ $name }}.setAttribute('value', '{{ old($name) }}')            
-        }
-      });
-    </script>
+   @include('lib.input_select', ['name' => $name])
 @endif

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('app')
-<div class="flex items-center justify-center mt-20">
+<div class="flex items-center justify-center p-5 mt-20">
     <div class="w-[500px] max-w-full p-5 rounded-lg shadow-xl bg-white flex flex-col gap-y-4">
         @if(session('resent'))
             @include('components.text_notice', ['type_ntc' => 'success', 'text' => 'đã gửi lại email xác thực'])
@@ -15,27 +15,5 @@
             @include('components.button_submit', ['text' => 'gửi lại email'])
         </form>
     </div>
-    {{-- <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Verify Your Email Address') }}</div>
-
-                <div class="card-body">
-                    @if (session('resent'))
-                        <div class="alert alert-success" role="alert">
-                            {{ __('A fresh verification link has been sent to your email address.') }}
-                        </div>
-                    @endif
-
-                    {{ __('Before proceeding, please check your email for a verification link.') }}
-                    {{ __('If you did not receive the email') }},
-                    <form class="d-inline" method="POST" action="{{ route('verification.resend') }}">
-                        @csrf
-                        <button type="submit" class="p-0 m-0 align-baseline btn btn-link">{{ __('click here to request another') }}</button>.
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div> --}}
 </div>
 @endsection

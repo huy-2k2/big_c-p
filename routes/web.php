@@ -26,6 +26,8 @@ Route::get('notaccept',  fn () => view('notaccept'));
 
 Route::group(['middleware' => ['auth', 'verified', 'accepted']], function () {
     Route::get('admin', [AdminController::class, 'index']);
+    Route::get('admin/create_notifi', [AdminController::class, 'create_notifi'])->name('admin.create_notifi');
+    Route::post('admin/store_notifi', [AdminController::class, 'store_notifi'])->name('admin.store_notifi');
     Route::get('factory', [FactoryController::class, 'index']);
     Route::get('warranty_center', [WarrantyCenterController::class, 'index']);
     Route::get('vendor', [VendorController::class, 'index']);

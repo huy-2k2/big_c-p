@@ -18,7 +18,7 @@ class ChangePasswordController extends Controller
         Session::flash('password_changed', false);
         $request->validate([
             'password_old' => ['required', new MatchOldPassword],
-            'password' => ['required', 'string', 'min:8', 'confirmed']
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
         User::find(Auth::user()->id)->update(['password' => Hash::make($request->password)]);
