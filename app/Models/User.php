@@ -69,7 +69,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function readed_notifications()
     {
-        return $this->belongsToMany(Notification::class, 'user_notification')->wherePivotNotNull('readed_at')->orderByPivot('readed_at', 'desc');
+        return $this->belongsToMany(Notification::class, 'user_notification')->withPivot('readed_at')->wherePivotNotNull('readed_at')->orderByPivot('readed_at', 'desc');
     }
 
     public static function get_users_with_role($role)

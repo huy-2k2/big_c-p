@@ -15,14 +15,13 @@
        
        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
        <script src="{{ url('fetch_data.js') }}"></script>
-       <script src="{{ url('frontend.js') }}"></script>
       </head>
 <body>
     <div id="app">
         @yield('app')
     </div>
     <script>
-         @if(Session::has('message'))
+        @if(Session::has('message'))
             toastr.options = {
                 "closeButton" : true,
                 "progressBar" : true

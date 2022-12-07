@@ -69,4 +69,11 @@ class AdminController extends Controller
 
         return Redirect::back()->with(['message' => 'tạo thông báo thành công']);
     }
+
+    public function notifi()
+    {
+        $users = User::all();
+        $notifications = Notification::all();
+        return view('admin.notifi', ['users' => $users, 'notifications' => $notifications]);
+    }
 }

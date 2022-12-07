@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('app')
-    <div class="flex items-start justify-start">
-        <div id="sidebar" class="not-active flex-shrink-0 bg-white translate-x-0 z-30 absolute top-0 left-0 lg:relative w-[280px] min-h-screen max-h-screen flex flex-col duration-300 overflow-x-hidden">
+    <div class="flex items-start justify-start w-screen">
+        <div id="sidebar" class="flex-shrink-0 bg-white translate-x-0 z-30 absolute top-0 left-0 lg:relative w-[280px] min-h-screen max-h-screen flex flex-col duration-300 overflow-x-hidden">
                 <div class="flex items-center justify-center gap-x-10 border border-gray-200 border-t-transparent h-[64px]">
                     <a href="{{ route('home') }}" class="flex items-center justify-center h-full">
                         <img src="{{ url('images/logo.jpg') }}" class="object-cover w-16 max-h-full" alt="logo">
@@ -36,7 +36,7 @@
                                 {{ Auth::user()->not_readed_notifications->count() }}
                             </span>
                         </div>
-                        <div id="notifi-menu" class="hidden absolute right-0 w-[350px] bg-white z-10 border border-gray-300 rounded-lg shadow-lg top-full">
+                        <div id="notifi-menu" class="hidden absolute right-0 w-[300px] bg-white z-10 border border-gray-300 rounded-lg shadow-lg top-full">
                             <div class="p-5 border border-transparent border-b-gray-200">
                                 <div class="flex items-center justify-start mb-2 text-gray-800 gap-x-3">
                                     <span class="flex items-center justify-center w-6 h-6 p-0.5">
@@ -54,7 +54,7 @@
                             <div class="max-h-[350px] overflow-y-auto custom-scrollbar">
                                 <ul id="notifi-menu-not-readed">
                                     @foreach (Auth::user()->not_readed_notifications as $notification)
-                                            <li data-index="{{ $notification->id }}" class="flex flex-col px-5 py-2 pr-1 border border-transparent cursor-pointer not-readed notification-summary gap-y-1 border-b-gray-200">
+                                            <li data-title="{{ $notification->title }}" data-content="{{ $notification->content }}" data-created_at="{{ $notification->created_at }}" data-index="{{ $notification->id }}" class="flex flex-col px-5 py-2 pr-1 border border-transparent cursor-pointer not-readed notification-summary gap-y-1 border-b-gray-200">
                                                 <span class="text-sm font-medium line-clamp-1">{{ $notification->title }}</span>
                                                 <span class="text-[12px] text-gray-500">
                                                     @include('lib.second_to_date', ['second' => time() -  strtotime($notification->created_at)])
@@ -64,8 +64,8 @@
                                 </ul>
                                 <ul id="notifi-menu-readed" class="hidden">
                                     @foreach (Auth::user()->readed_notifications as $notification)
-                                            <li data-index="{{ $notification->id }}" class="flex flex-col px-5 py-2 pr-1 border border-transparent cursor-pointer readed notification-summary gap-y-1 border-b-gray-200">
-                                                <span class="text-sm font-medium line-clamp-1">{{ $notification->title }}</span>
+                                    <li data-title="{{ $notification->title }}" data-content="{{ $notification->content }}" data-created_at="{{ $notification->created_at }}" data-readed_at="{{ $notification->pivot->readed_at }}" data-index="{{ $notification->id }}" class="flex flex-col px-5 py-2 pr-1 border border-transparent cursor-pointer notification-summary gap-y-1 border-b-gray-200">
+                                        <span class="text-sm font-medium line-clamp-1">{{ $notification->title }}</span>
                                                 <span class="text-[12px] text-gray-500">
                                                     @include('lib.second_to_date', ['second' => time() -  strtotime($notification->created_at)])
                                                 </span>
@@ -112,8 +112,10 @@
                         </ul>
                 </div>
             </div>
-            <div class="flex-grow overflow-y-auto custom-scrollbar">
-                @yield('content')
+            <div class="relative flex-grow overflow-y-auto custom-scrollbar">
+                <div class="absolute w-full h-full max-w-full">
+                    @yield('content')
+                </div>
             </div>
         </div>
     </div>
@@ -142,44 +144,38 @@
              @include('components.button_close', ['id' => 'close-change-password'])
         </div>
     </div>
-    @php 
-        $dependent_notification = []
-    @endphp
-    @foreach (Auth::user()->notifications as $notification)
-        @php 
-            $dependent_notification[] = "#notification-detail-$notification->id"
-        @endphp
-        <div id="notification-detail-{{ $notification->id }}" class="fixed top-0 z-30 hidden w-full min-h-full p-5 bg-gray-900 notification-detail bg-opacity-20" id="notification-detail-{{ $notification->id }}">
-            <div class="p-5 overflow-y-auto max-h-[350px] custom-scrollbar overflow-x-hidden bg-white rounded-lg w-[500px] max-w-full  relative mx-auto mt-20">
-                <div class="mb-8">
-                    @include('components.heading', ['text' => 'Chi tiết thông báo'])
-                </div>
-                <div class="flex flex-col mb-5 gap-y-1">
-                    <span class="text-lg text-gray-600">Tiêu đề:</span>
-                    <h3 class="ml-4 text-sm text-gray-500">{{ $notification->title }}</h3>
-                </div>
-                <div class="flex flex-col mb-8 gap-y-1">
-                    <span class="text-lg text-gray-600">Nội dung:</span>
-                    <h3 class="ml-4 text-sm text-gray-500"> {{ $notification->content }}</h3>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    @include('components.input_float_disable', ['value' => $notification->created_at, 'label' => 'thời gian tạo'])
-                    @if ($notification->pivot->readed_at)
-                        @include('components.input_float_disable', ['value' => $notification->pivot->readed_at, 'label' => 'thời gian đọc'])
-                    @else
-                        <div class="notifi-reading">
-                            @include('components.input_float_disable', ['value' => 'đang đọc', 'label' => 'trạng thái'])
-                        </div>
-                    @endif
-                </div>
-                @include('components.button_close', ['btn_close_class' => 'btn-close-notification', 'data_index' => $notification->id, 'id' => "close-notification-{$notification->id}"])
+   
+    <div class="fixed top-0 z-30 hidden w-full min-h-full p-5 bg-gray-900 notification-detail bg-opacity-20" >
+        <div class="p-5 overflow-y-auto max-h-[350px] custom-scrollbar overflow-x-hidden bg-white rounded-lg w-[500px] max-w-full  relative mx-auto mt-20">
+            <div class="mb-8">
+                @include('components.heading', ['text' => 'Chi tiết thông báo'])
             </div>
+            <div class="flex flex-col mb-5 gap-y-1">
+                <span class="text-lg text-gray-600">Tiêu đề:</span>
+                <h3 class="ml-4 text-sm text-gray-500 notification-title"></h3>
+            </div>
+            <div class="flex flex-col mb-8 gap-y-1">
+                <span class="text-lg text-gray-600">Nội dung:</span>
+                <h3 class="ml-4 text-sm text-gray-500 notification-content"> </h3>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="notification-created_at">
+                    @include('components.input_float_disable', ['value' => '', 'label' => 'thời gian tạo'])
+                </div>
+                <div class="notification-readed_at">
+                    @include('components.input_float_disable', ['value' => '', 'label' => 'thời gian đọc'])
+                </div>
+                <div class="notification-reading">
+                    @include('components.input_float_disable', ['value' => 'đang đọc', 'label' => 'trạng thái'])
+                </div>
+            </div>
+            @include('components.button_close', ['id' => 'btn-close-notification'])
         </div>
-    @endforeach
-    @include('lib.auto_toggle', ['toggle_btn' => '#notifi-toggle', 'main' => '#notifi-menu', 'dependents_element' => $dependent_notification])
+    </div>
+    @include('lib.auto_toggle', ['toggle_btn' => '#notifi-toggle', 'main' => '#notifi-menu', 'dependents_element' => ['.notification-detail']])
+    @include('lib.auto_toggle', ['toggle_btn' => '#user-toggle', 'main' => '#user-menu', 'dependents_element' => ['#account-info', '#change-password-form']])
     <script>
         (() => {
-            auto_toggle('#user-toggle', '#user-menu', ['#account-info', '#change-password-form'])
             const sidebar = document.querySelector('#sidebar');
             const sidebar_toggle_btn = document.querySelector('#sidebar-toggle')
             const sidebar_hidden_btn = document.querySelector('#sidebar-hidden');
@@ -197,41 +193,58 @@
             const notifi_toggle_btn = document.querySelector('#notifi-toggle')
 
             const notifications_summary = document.querySelectorAll('.notification-summary')
-            const close_notification_btns = document.querySelectorAll('.btn-close-notification')
+            const close_notification_btn = document.querySelector('#btn-close-notification')
 
             const notifi_menu_readed =  document.querySelector('#notifi-menu-readed')
             const notifi_menu_not_readed =  document.querySelector('#notifi-menu-not-readed')
 
 
-            close_notification_btns.forEach((close_notification_btn) => {
-                close_notification_btn.onclick = function() {   
-                    const index = this.getAttribute('data-index')
-                    const notification_detail = document.querySelector(`#notification-detail-${index}`)
-                    notification_detail.classList.remove('active')
-                    if(notification_detail.getAttribute('data-timestamp')) {
-                        notification_detail.querySelector('.notifi-reading label').innerText = 'thời gian đọc'
-                        notification_detail.querySelector('.notifi-reading input').value = notification_detail.getAttribute('data-timestamp')
-                        notification_detail.setAttribute('data-timestamp', '')
+            close_notification_btn.onclick = function() {   
+                const notification_detail = document.querySelector(`.notification-detail`)
+                notification_detail.classList.remove('active')
+            }
+
+            function handle_change_size() {
+                handle()
+                function handle() {
+                    if(document.body.clientWidth < 1024) {
+                        sidebar.classList.add('not-active')
+                    } else {
+                        sidebar.classList.remove('not-active')
                     }
                 }
-            })
+                window.addEventListener('resize', handle)
+            }
 
-            notifications_summary.forEach(notififaction_summary => {
-                notififaction_summary.onclick = function() {
-                    const index = this.getAttribute('data-index')
-                    const notification_detail = document.querySelector(`#notification-detail-${index}`)
+            handle_change_size()
+
+            function handle_notifi_open() {
+                const notification_detail = document.querySelector(`.notification-detail`)
                     notification_detail.classList.add('active')
+                    notification_detail.querySelector('.notification-title').innerText = this.getAttribute('data-title')
+                    notification_detail.querySelector('.notification-content').innerText = this.getAttribute('data-content')
+                    notification_detail.querySelector('.notification-created_at input').value = this.getAttribute('data-created_at')
+                    notification_detail.querySelector('.notification-readed_at input').value = this.getAttribute('data-readed_at')
+                    const index = this.getAttribute('data-index')
                     if(this.classList.contains('not-readed')) {
+                        notification_detail.querySelector('.notification-readed_at').classList.add('hidden')
+                        notification_detail.querySelector('.notification-reading').classList.remove('hidden')
                         ;(async () => {
                             const response = await post_data('notification/mark_readed', {notification_id: index, user_id: '{{ Auth::user()->id }}'})
                             document.querySelector('#number-not-readed').innerText -= 1;
                             this.classList.remove('not-readed')
                             notifi_menu_not_readed.removeChild(this)
                             notifi_menu_readed.insertBefore(this, notifi_menu_readed.children[0])
-                            notification_detail.setAttribute('data-timestamp', response)
+                            this.setAttribute('data-readed_at', response)
                         })();
+                    } else {
+                        notification_detail.querySelector('.notification-readed_at').classList.remove('hidden')
+                        notification_detail.querySelector('.notification-reading').classList.add('hidden')
                     }
-                }
+            }
+
+            notifications_summary.forEach(notififaction_summary => {
+                notififaction_summary.onclick = handle_notifi_open
             });
 
 
@@ -252,8 +265,25 @@
 
             function handle_notifi_created({notification}) {
                 console.log(notification);
+                const number_notifi = document.querySelector('#number-not-readed');
+                number_notifi.innerText = parseInt(number_notifi.innerText) + 1
+                const list_notifi = document.querySelector('#notifi-menu-not-readed');
+                const li = document.createElement('li')
+                li.setAttribute('class', 'flex flex-col px-5 py-2 pr-1 border border-transparent cursor-pointer not-readed notification-summary gap-y-1 border-b-gray-200')
+                li.setAttribute('data-title', notification.title)
+                li.setAttribute('data-content', notification.content)
+                li.setAttribute('data-created_at', notification.created_at)
+                li.setAttribute('data-index', notification.id)
+                li.innerHTML = `
+                <span class="text-sm font-medium line-clamp-1"> ${notification.title}</span>
+                 <span class="text-[12px] text-gray-500">
+                    1 giây trước
+                 </span>
+                `
+                li.onclick = handle_notifi_open
+                list_notifi.insertBefore(li, list_notifi.children[0])
             }
-
+            
             window.addEventListener('load', function() { 
                
                 Echo.private(`notifications.{{ Auth::user()->id }}`)
