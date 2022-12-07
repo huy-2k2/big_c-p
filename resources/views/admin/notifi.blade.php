@@ -88,7 +88,7 @@
                                 <td data-id='{{ $user->id }}' class="px-6 py-4 underline cursor-pointer open-user-detail-btn">
                                     {{ $user->name }}
                                 </td>
-                                <td class="px-6 py-4">
+                                <td class="px-6 py-4 readed_time_{{ $user->id }}">
                                     {{ $user->pivot->readed_at ?? 'chưa đọc' }}
                                 </td>
                             </tr>
@@ -115,6 +115,17 @@
                     document.querySelector(`#notification-${index}`).classList.add('active')
                 }
             });
+
+            function handle_readed_notifi({data}) {
+
+                document.querySelector(`#notification-${data.notifi_id} .readed_time_${data.user_id}`).innerText = data.time
+            }
+
+            window.addEventListener('load', function() { 
+               
+               Echo.private(`notification_readed`)
+               .listen('ReadedNotifiEvent', handle_readed_notifi)
+           })
         })();
     </script>
 @endsection     

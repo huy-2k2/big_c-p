@@ -22,3 +22,7 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 Broadcast::channel("notifications.{user_id}", function ($user, $user_id) {
     return $user->id == $user_id;
 });
+
+Broadcast::channel("notification_readed", function ($user) {
+    return $user->role->name == 'admin';
+});

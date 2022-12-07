@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ReadedNotifiEvent;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -17,7 +18,7 @@ class NotificationController extends Controller
         if (!$notification_user->readed_at) {
             $notification_user->update(['readed_at' => $timestamp]);
         }
-
+        broadcast(new ReadedNotifiEvent(['time' => $timestamp->toDateTimeString(),  'notifi_id' => $notification_id, 'user_id' => $user_id]));
         return response()->json($timestamp->toDateTimeString(), 200);
     }
 }
