@@ -22,13 +22,10 @@ class CreateNotifiEvent implements ShouldBroadcast
      *
      * @return void
      */
-    public $notification;
-    public $user_id;
-
-    public function __construct($notification, $user_id)
+    public $data;
+    public function __construct($data)
     {
-        $this->notification = $notification;
-        $this->user_id = $user_id;
+        $this->data = $data;
     }
 
 
@@ -39,6 +36,6 @@ class CreateNotifiEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('notifications.' . $this->user_id);
+        return new PrivateChannel('notifications.' . $this->data['user_id']);
     }
 }

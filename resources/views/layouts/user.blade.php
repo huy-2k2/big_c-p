@@ -263,8 +263,8 @@
             sidebar_toggle_btn.onclick = () => sidebar.classList.toggle('not-active')
             
 
-            function handle_notifi_created({notification}) {
-                console.log(notification);
+            function handle_notifi_created({data}) {
+                const {notification, time} = data
                 const number_notifi = document.querySelector('#number-not-readed');
                 number_notifi.innerText = parseInt(number_notifi.innerText) + 1
                 const list_notifi = document.querySelector('#notifi-menu-not-readed');
@@ -272,12 +272,12 @@
                 li.setAttribute('class', 'flex flex-col px-5 py-2 pr-1 border border-transparent cursor-pointer not-readed notification-summary gap-y-1 border-b-gray-200')
                 li.setAttribute('data-title', notification.title)
                 li.setAttribute('data-content', notification.content)
-                li.setAttribute('data-created_at', notification.created_at)
+                li.setAttribute('data-created_at', time)
                 li.setAttribute('data-index', notification.id)
                 li.innerHTML = `
                 <span class="text-sm font-medium line-clamp-1"> ${notification.title}</span>
                  <span class="text-[12px] text-gray-500">
-                    1 giây trước
+                    1 phút trước
                  </span>
                 `
                 li.onclick = handle_notifi_open

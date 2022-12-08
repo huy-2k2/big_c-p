@@ -25,7 +25,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'role_id',
-        'address_id'
+        'address_id',
+        'account_accepted_at'
     ];
 
     /**
@@ -74,7 +75,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public static function get_users_with_role($role)
     {
-        return Self::whereHas('role', function (Builder $query) use ($role) {
+        return Self::where('account_accepted_at', '!=', null)->whereHas('role', function (Builder $query) use ($role) {
             $query->where('name', $role);
         })->get();
     }

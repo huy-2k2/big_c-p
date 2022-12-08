@@ -6,6 +6,7 @@ use App\Events\CreateNotifiEvent;
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 
@@ -58,11 +59,11 @@ class AdminController extends Controller
                     $users = User::get_users_with_role($data_users['role']);
                     foreach ($users as $user) {
                         $notification->users()->attach($user->id);
-                        broadcast(new CreateNotifiEvent($notification, $user->id));
+                        broadcast(new CreateNotifiEvent(['user_id' => $user->id, 'notification' => $notification, 'time' => $notification->created_at->toDateTimeString()]));
                     }
                 } else {
                     $notification->users()->attach($id);
-                    broadcast(new CreateNotifiEvent($notification, $id));
+                    broadcast(new CreateNotifiEvent(['user_id' => $id, 'notification' => $notification, 'time' => $notification->created_at->toDateTimeString()]));
                 }
             }
         }
@@ -75,5 +76,29 @@ class AdminController extends Controller
         $users = User::all();
         $notifications = Notification::all();
         return view('admin.notifi', ['users' => $users, 'notifications' => $notifications]);
+    }
+
+    public function accept_user()
+    {
+        $users = User::all();
+        return view('admin.accept_user', ['users' => $users]);
+    }
+
+    public function accept_user_store(Request $request)
+    {
+        $user = User::find($request->user_id);
+        if (!$user->account_accepted_at) {
+            $user->update(['account_accepted_at' => Carbon::now()]);
+        }
+        return redirect()->route('admin.accept_user');
+    }
+
+    public function accept_user_remove(Request $request)
+    {
+        $user = User::find($request->user_id);
+        if (!$user->account_accepted_at) {
+            $user->delete();
+        }
+        return redirect()->route('admin.accept_user');
     }
 }

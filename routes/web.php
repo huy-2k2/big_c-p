@@ -29,6 +29,10 @@ Route::group(['middleware' => ['auth', 'verified', 'accepted']], function () {
     Route::get('admin/create_notifi', [AdminController::class, 'create_notifi'])->name('admin.create_notifi');
     Route::post('admin/store_notifi', [AdminController::class, 'store_notifi'])->name('admin.store_notifi');
     Route::get('admin/notifi', [AdminController::class, 'notifi'])->name('admin.notifi');
+    Route::get('admin/accept_user', [AdminController::class, 'accept_user'])->name('admin.accept_user');
+    Route::post('admin/accept_user/store', [AdminController::class, 'accept_user_store'])->name('admin.accept_user.store');
+    Route::post('admin/accept_user/remove', [AdminController::class, 'accept_user_remove'])->name('admin.accept_user.remove');
+
     Route::get('factory', [FactoryController::class, 'index']);
     Route::get('warranty_center', [WarrantyCenterController::class, 'index']);
     Route::get('vendor', [VendorController::class, 'index']);
