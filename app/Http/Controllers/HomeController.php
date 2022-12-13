@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Str;
 
 class HomeController extends Controller
 {
@@ -24,7 +28,6 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $role = Auth::user()->role->name;
-        return redirect($role);
+        return redirect(Auth::user()->role->name);
     }
 }

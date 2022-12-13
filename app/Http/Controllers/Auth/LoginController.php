@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 
 class LoginController extends Controller
 {
@@ -45,5 +46,11 @@ class LoginController extends Controller
             $this->username() => 'required|string|email',
             'password' => 'required|string|min:8',
         ]);
+    }
+
+    protected function loggedOut(Request $request)
+    {
+        Cookie::queue(Cookie::make('access_token', '', 0, null, null, false, false));
+        return false;
     }
 }

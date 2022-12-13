@@ -12,10 +12,6 @@ use Illuminate\Support\Facades\Redirect;
 
 class AdminController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(['author:admin']);
-    }
 
     public function index()
     {
@@ -84,21 +80,23 @@ class AdminController extends Controller
         return view('admin.accept_user', ['users' => $users]);
     }
 
+    //api
     public function accept_user_store(Request $request)
     {
-        $user = User::find($request->user_id);
+        $user = User::find($request->user_accept_id);
         if (!$user->account_accepted_at) {
             $user->update(['account_accepted_at' => Carbon::now()]);
         }
-        return redirect()->route('admin.accept_user');
+        return response()->json(true);
     }
 
+    //api
     public function accept_user_remove(Request $request)
     {
-        $user = User::find($request->user_id);
+        $user = User::find($request->user_remove_id);
         if (!$user->account_accepted_at) {
             $user->delete();
         }
-        return redirect()->route('admin.accept_user');
+        return response()->json(true);
     }
 }

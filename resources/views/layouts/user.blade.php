@@ -230,12 +230,13 @@
                         notification_detail.querySelector('.notification-readed_at').classList.add('hidden')
                         notification_detail.querySelector('.notification-reading').classList.remove('hidden')
                         ;(async () => {
-                            const response = await post_data('notification/mark_readed', {notification_id: index, user_id: '{{ Auth::user()->id }}'})
+                            const response = await post_data('notification/mark_readed', {notification_id: index, user_id: '{{ Auth::user()->id }}', access_token: getCookie('access_token')})
                             document.querySelector('#number-not-readed').innerText -= 1;
                             this.classList.remove('not-readed')
                             notifi_menu_not_readed.removeChild(this)
                             notifi_menu_readed.insertBefore(this, notifi_menu_readed.children[0])
                             this.setAttribute('data-readed_at', response)
+                            console.log(response);
                         })();
                     } else {
                         notification_detail.querySelector('.notification-readed_at').classList.remove('hidden')

@@ -31,7 +31,7 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="tbody">
                         @php
                             $stt = 0;    
                         @endphp
@@ -41,7 +41,7 @@
                                     $stt++;    
                                 @endphp
                                 <tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
-                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <th data-id="{{ $user->id }}" scope="row" class="px-6 py-4 font-medium text-gray-900 stt-user whitespace-nowrap dark:text-white">
                                         {{ $stt }}
                                     </th>
                                     <td data-id='{{ $user->id }}' class="px-6 py-4 underline cursor-pointer open-user-detail-btn whitespace-nowrap">
@@ -53,22 +53,14 @@
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         {{ $user->created_at}}
                                     </td>
-                                    <td class="px-6 py-4 text-right whitespace-nowrap">
-                                        <div class="font-medium text-blue-600 cursor-pointer">
-                                            <form action="{{ route('admin.accept_user.store') }}" method="POST">
-                                                @csrf
-                                                <input name="user_id" type="text" hidden value="{{ $user->id }}">
-                                                <button type="submit" class="hover:underline">chấp nhận</button>
-                                            </form>
+                                    <td data-id="{{ $user->id }}" class="px-6 py-4 text-right whitespace-nowrap accept-user">
+                                        <div  class="font-medium text-blue-600 cursor-pointer hover:underline">
+                                            chấp nhận
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 text-right whitespace-nowrap">
+                                    <td data-id="{{ $user->id }}" class="px-6 py-4 text-right whitespace-nowrap remove-user">
                                         <div class="font-medium text-red-600 cursor-pointer hover:underline">
-                                            <form action="{{ route('admin.accept_user.remove') }}" method="POST">
-                                                @csrf
-                                                <input name="user_id" type="text" hidden value="{{ $user->id }}">
-                                                <button type="submit" class="hover:underline">xóa</button>
-                                            </form>
+                                            xóa
                                         </div>
                                     </td>
                                 </tr>
@@ -78,5 +70,63 @@
                 </table>
             </div>
         </div>
+        <script>
+            ;(() => {
+                const accept_user_btns = document.querySelectorAll('.accept-user')
+                const remove_user_btns = document.querySelectorAll('.remove-user')
+                const table_body = document.querySelector('.tbody')
+                accept_user_btns.forEach(btn => {
+                    btn.onclick = function() {
+                        handle_remove_submited(this)
+                        axios.post('{{ route('admin.accept_user.store')}}', {
+                            access_token: getCookie('access_token'),
+                            user_id: '{{ Auth::user()->id }}',
+                            user_accept_id: this.getAttribute('data-id')
+                        })
+                        .then(({data}) => {
+                            if(data) {
+                                toastr.options = {
+                                    "closeButton" : true,
+                                    "progressBar" : true
+                                }
+                                toastr.success("chấp nhận người dùng thành công");
+                            }
+                        })
+                    }
+                });
+
+                remove_user_btns.forEach(btn => {
+                    btn.onclick = function() {
+                        handle_remove_submited(this)
+                        axios.post('{{ route('admin.accept_user.remove')}}', {
+                            access_token: getCookie('access_token'),
+                            user_id: '{{ Auth::user()->id }}',
+                            user_remove_id: this.getAttribute('data-id')
+                        })
+                        .then(({data}) => {
+                            if(data) {
+                                toastr.options = {
+                                    "closeButton" : true,
+                                    "progressBar" : true
+                                }
+                                toastr.success("xóa người dùng thành công");
+                            }
+                        })
+                    }
+                });
+
+                
+
+                function handle_remove_submited(element)  {
+                    const id = element.getAttribute('data-id')
+                    table_body.removeChild(element.parentElement)
+                    const stt_users = document.querySelectorAll('.stt-user');
+                    stt_users.forEach(stt => {
+                        if(stt.getAttribute('data-id') > id)
+                            stt.innerText -= 1
+                    })
+                }
+            })();
+        </script>
     @parent
 @endsection     

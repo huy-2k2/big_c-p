@@ -19,23 +19,33 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->middleware(['auth'])->name('home');
 
 Route::get('notfound', fn () => view('notfound'));
 Route::get('notaccept',  fn () => view('notaccept'));
 
-Route::group(['middleware' => ['auth', 'verified', 'accepted']], function () {
-    Route::get('admin', [AdminController::class, 'index']);
-    Route::get('admin/create_notifi', [AdminController::class, 'create_notifi'])->name('admin.create_notifi');
-    Route::post('admin/store_notifi', [AdminController::class, 'store_notifi'])->name('admin.store_notifi');
-    Route::get('admin/notifi', [AdminController::class, 'notifi'])->name('admin.notifi');
-    Route::get('admin/accept_user', [AdminController::class, 'accept_user'])->name('admin.accept_user');
-    Route::post('admin/accept_user/store', [AdminController::class, 'accept_user_store'])->name('admin.accept_user.store');
-    Route::post('admin/accept_user/remove', [AdminController::class, 'accept_user_remove'])->name('admin.accept_user.remove');
+Route::group(['middleware' => ['auth', 'verified', 'accepted', 'token']], function () {
 
-    Route::get('factory', [FactoryController::class, 'index']);
-    Route::get('warranty_center', [WarrantyCenterController::class, 'index']);
-    Route::get('vendor', [VendorController::class, 'index']);
+    Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+    Route::group(['middleware' => 'author:admin'], function () {
+        Route::get('admin', [AdminController::class, 'index']);
+        Route::get('admin/create_notifi', [AdminController::class, 'create_notifi'])->name('admin.create_notifi');
+        Route::post('admin/store_notifi', [AdminController::class, 'store_notifi'])->name('admin.store_notifi');
+        Route::get('admin/notifi', [AdminController::class, 'notifi'])->name('admin.notifi');
+        Route::get('admin/accept_user', [AdminController::class, 'accept_user'])->name('admin.accept_user');
+    });
+
+    Route::group(['middleware' => 'author:factory'], function () {
+        Route::get('factory', [FactoryController::class, 'index']);
+    });
+
+    Route::group(['middleware' => 'author:warranty_center'], function () {
+        Route::get('warranty_center', [WarrantyCenterController::class, 'index']);
+    });
+
+    Route::group(['middleware' => 'author:vendor'], function () {
+        Route::get('vendor', [VendorController::class, 'index']);
+    });
 
     Route::post('password/change', [ChangePasswordController::class, 'index'])->name('password.change');
 });
