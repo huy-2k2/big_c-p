@@ -6508,6 +6508,18 @@
         },
         {
             "name": "laravel/sail",
+<<<<<<< HEAD
+            "version": "v1.16.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/sail.git",
+                "reference": "72412b14d6f4e73b71b5f3068bdb064184fbb001"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/sail/zipball/72412b14d6f4e73b71b5f3068bdb064184fbb001",
+                "reference": "72412b14d6f4e73b71b5f3068bdb064184fbb001",
+=======
             "version": "v1.16.6",
             "source": {
                 "type": "git",
@@ -6518,6 +6530,7 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/laravel/sail/zipball/2e8be54590bde421eb04e461a1421302a5b22cca",
                 "reference": "2e8be54590bde421eb04e461a1421302a5b22cca",
+>>>>>>> d14b954080c186ca6369517acf81f85be9466cd1
                 "shasum": ""
             },
             "require": {
@@ -6564,7 +6577,11 @@
                 "issues": "https://github.com/laravel/sail/issues",
                 "source": "https://github.com/laravel/sail"
             },
+<<<<<<< HEAD
+            "time": "2022-12-12T16:47:37+00:00"
+=======
             "time": "2022-12-19T15:41:32+00:00"
+>>>>>>> d14b954080c186ca6369517acf81f85be9466cd1
         },
         {
             "name": "mockery/mockery",
@@ -6898,6 +6915,18 @@
         },
         {
             "name": "phpunit/php-code-coverage",
+<<<<<<< HEAD
+            "version": "9.2.21",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
+                "reference": "3f893e19712bb0c8bc86665d1562e9fd509c4ef0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/3f893e19712bb0c8bc86665d1562e9fd509c4ef0",
+                "reference": "3f893e19712bb0c8bc86665d1562e9fd509c4ef0",
+=======
             "version": "9.2.22",
             "source": {
                 "type": "git",
@@ -6908,6 +6937,7 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/e4bf60d2220b4baaa0572986b5d69870226b06df",
                 "reference": "e4bf60d2220b4baaa0572986b5d69870226b06df",
+>>>>>>> d14b954080c186ca6369517acf81f85be9466cd1
                 "shasum": ""
             },
             "require": {
@@ -6963,7 +6993,11 @@
             ],
             "support": {
                 "issues": "https://github.com/sebastianbergmann/php-code-coverage/issues",
+<<<<<<< HEAD
+                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/9.2.21"
+=======
                 "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/9.2.22"
+>>>>>>> d14b954080c186ca6369517acf81f85be9466cd1
             },
             "funding": [
                 {
@@ -6971,7 +7005,11 @@
                     "type": "github"
                 }
             ],
+<<<<<<< HEAD
+            "time": "2022-12-14T13:26:54+00:00"
+=======
             "time": "2022-12-18T16:40:55+00:00"
+>>>>>>> d14b954080c186ca6369517acf81f85be9466cd1
         },
         {
             "name": "phpunit/php-file-iterator",
