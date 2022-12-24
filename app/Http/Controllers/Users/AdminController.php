@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
-
     public function index()
     {
         return redirect()->route('admin.product_line');
@@ -114,81 +113,6 @@ class AdminController extends Controller
         return response()->json(true);
     }
 
-    public function product_ranges() {
-        $ranges = DB::table('ranges')->get();
-    
-        return view('admin.product_ranges', compact('ranges'));
-    }
-
-    public function add_product_range() {
-        return view('admin.add_product_range');
-    }
-
-    public function post_add_product_range(Request $request) {
-        $request->validate(
-            [
-                'name'=>'required',
-                'property'=>'required',
-                'warranty_period_time'=>'required',
-            ],
-            [
-                'property.required'=>'Vui lòng nhập trường này',
-                'name.required'=>'Vui lòng nhập trường này',
-                'warranty_period_time.required'=>'Vui lòng nhập trường này',
-            ]
-        );
-
-        DB::table('ranges')->insert([
-            'name' => $request->input('name'),
-            'property' => $request->input('property'),
-            'warranty_period_time' => $request->input('warranty_period_time'),
-        ]);
-
-        return redirect()->route('admin.product_ranges');
-    }
-
-    public function delete_product_range($id) {
-        $range_delete = DB::table('ranges')->where('id', '=', $id)->get();
-        if($range_delete->first()) {
-            DB::table('ranges')->where('id', '=', $id)->delete();
-        } else {
-            return redirect()->route('admin.product_ranges');
-        }
-        return redirect()->route('admin.product_ranges');
-    }
-
-    public function edit_product_range($id) {
-        $range_edit = DB::table('ranges')->where('id', '=', $id)->get()->first();
-        if($range_edit) {
-            return view('admin.edit_product_range', compact('range_edit'));
-        } else {
-            return redirect()->route('admin.product_ranges');
-        }
-    }
-
-    public function put_edit_product_range($id, Request $request) {
-        $request->validate(
-            [
-                'name'=>'required',
-                'property'=>'required',
-                'warranty_period_time'=>'required',
-            ],
-            [
-                'property.required'=>'Vui lòng nhập trường này',
-                'name.required'=>'Vui lòng nhập trường này',
-                'warranty_period_time.required'=>'Vui lòng nhập trường này',
-            ]
-        );
-
-        DB::table('ranges')->where('id', $id)->update([
-            'name' => $request->input('name'),
-            'property' => $request->input('property'),
-            'warranty_period_time' => $request->input('warranty_period_time'),
-        ]);
-
-        return redirect()->route('admin.product_ranges');
-    }
-  
     public function product_line()
     {
         $users = User::all();
