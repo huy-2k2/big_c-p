@@ -72,24 +72,24 @@
         @apply block;
     }
 
-    .select-user-list.active + .select-user {
+    .select-option-list.active + .select-option {
         @apply border-blue-500;
     }
 
-    .select-user-list.active {
+    .select-option-list.active {
         @apply block;
     }
 
-    .select-user-list.active + .select-user .select-user-label,
-    .select-user.valid .select-user-label {
+    .select-option-list.active + .select-option .select-option-label,
+    .select-option.valid .select-option-label {
         @apply top-0 left-0 text-blue-500 scale-75;
     }
 
-    .select-user-list.active + .select-user .select-user-icon {
+    .select-option-list.active + .select-option .select-option-icon {
         @apply rotate-180;
     }
 
-    .select-user-list .select-choose.active {
+    .select-option-list .select-choose.active {
         @apply underline;
     }
 

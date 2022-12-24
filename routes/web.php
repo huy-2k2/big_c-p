@@ -37,6 +37,9 @@ Route::group(['middleware' => ['auth', 'verified', 'accepted', 'token']], functi
         Route::get('admin/product_line', [AdminController::class, 'product_line'])->name('admin.product_line');
         Route::get('admin/create_product_line', [AdminController::class, 'create_product_line'])->name('admin.create_product_line');
         Route::post('admin/store_product_line', [AdminController::class, 'store_product_line'])->name('admin.store_product_line');
+
+        Route::get('admin/statistic', [AdminController::class, 'product_statistic'])->name('admin.product_statistic');
+        Route::post('admin/print_statistic', [AdminController::class, 'print_product_statistic'])->name('admin.print_statistic');
     });
 
     Route::group(['middleware' => 'author:factory'], function () {

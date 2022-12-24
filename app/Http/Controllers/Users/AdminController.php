@@ -6,6 +6,7 @@ use App\Events\CreateNotifiEvent;
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
 use App\Models\Range;
+use App\Models\Status;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -16,8 +17,7 @@ class AdminController extends Controller
 
     public function index()
     {
-        $users = User::all();
-        return view('admin.main', ['users' => $users]);
+        return redirect()->route('admin.product_line');
     }
 
     public function create_notifi()
@@ -150,5 +150,18 @@ class AdminController extends Controller
         );
 
         return response()->json([1, 2, 3]);
+    }
+
+    public function product_statistic()
+    {
+        $vendors = User::get_users_with_role('vendor');
+        $warranty_centers = User::get_users_with_role('warranty_center');
+        $factories = User::get_users_with_role('factory');
+        return view('admin.product_statistic', ['users' => User::all(), 'statuses' => Status::all(), 'vendors' => $vendors, 'warranty_centers' => $warranty_centers, 'factories' => $factories]);
+    }
+
+    public function print_product_statistic(Request $request)
+    {
+        return $request;
     }
 }

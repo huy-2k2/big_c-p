@@ -4,19 +4,15 @@
 <div class="relative">
     <div id="select-{{ $name }}-inputs" class="hidden"></div>
  
-    <ul id="select-{{ $name }}-list" class="max-h-[150px] overflow-y-auto custom-scrollbar bg-white select-option-list hidden @if (!count($users) == 0 ) border @endif border-gray-300 overflow-hidden w-full rounded-lg text-sm text-gray-700 absolute top-full z-10">
-        @if (count($users) > 1)
+    <ul id="select-{{ $name }}-list" class="max-h-[150px] overflow-y-auto custom-scrollbar bg-white select-option-list hidden @if (!count($options) == 0 ) border @endif border-gray-300 overflow-hidden w-full rounded-lg text-sm text-gray-700 absolute top-full z-10">
+        @if (count($options) > 1)
         <li class="px-3 py-1 cursor-pointer hover:bg-blue-400 hover:text-white">
             <span data-id='0' class="block select-{{ $name }}-choose select-choose">--Chọn tất cả--</span>
         </li>
         @endif
-        @foreach ($users as $user)
-            @php
-                $select_dependents[] = "#account-info-$user->id"
-            @endphp
+        @foreach ($options as $option)
         <li class="flex items-center justify-between px-3 py-1 cursor-pointer hover:bg-blue-400 hover:text-white">
-            <span data-id='{{ $user->id }}' class="flex-grow select-{{ $name }}-choose select-choose">{{ $user->name }}</span>
-            <span data-id='{{ $user->id }}' class="text-sm font-medium open-user-detail-btn">chi tiết</span>
+            <span data-id='{{ $option->id }}' class="flex-grow select-{{ $name }}-choose select-choose">{{ $option->name }}</span>
         </li>
         @endforeach
     </ul>
@@ -30,7 +26,7 @@
         </div>
     </div>
 </div>
-@include('lib.auto_toggle', ['toggle_btn' => "#select-$name", 'main' => "#select-$name-list", "dependents_element" => $select_dependents])
+@include('lib.auto_toggle', ['toggle_btn' => "#select-$name", 'main' => "#select-$name-list"])
 <script>
     (() => {
         let values = []
