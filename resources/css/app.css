@@ -88,6 +88,13 @@
     .notifi.active {
         @apply flex;
     }
+    .product-line.active {
+        @apply block;
+    }
+
+    .refresh_product_line_btn.active {
+        @apply text-green-600 pointer-events-auto;
+    }
 }
 
 @layer components {

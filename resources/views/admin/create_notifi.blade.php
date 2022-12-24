@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 @section('content')
-        <div class="max-w-[100vw] p-5">
+        <div class="max-w-[100vw]">
             <form action="{{ route('admin.store_notifi') }}" method="POST" class="w-[500px] max-w-full flex flex-col mx-auto gap-5 p-5 rounded-lg shadow-lg">
                 @csrf
                 @include('components.input', ['name' => 'title', 'label' => 'tiêu đề thông báo'])

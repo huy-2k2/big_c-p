@@ -33,6 +33,10 @@ Route::group(['middleware' => ['auth', 'verified', 'accepted', 'token']], functi
         Route::post('admin/store_notifi', [AdminController::class, 'store_notifi'])->name('admin.store_notifi');
         Route::get('admin/notifi', [AdminController::class, 'notifi'])->name('admin.notifi');
         Route::get('admin/accept_user', [AdminController::class, 'accept_user'])->name('admin.accept_user');
+
+        Route::get('admin/product_line', [AdminController::class, 'product_line'])->name('admin.product_line');
+        Route::get('admin/create_product_line', [AdminController::class, 'create_product_line'])->name('admin.create_product_line');
+        Route::post('admin/store_product_line', [AdminController::class, 'store_product_line'])->name('admin.store_product_line');
     });
 
     Route::group(['middleware' => 'author:factory'], function () {

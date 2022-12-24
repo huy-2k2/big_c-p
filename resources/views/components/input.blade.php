@@ -3,7 +3,7 @@
 @endphp
 <div class="flex flex-col gap-y-1">
     <div class="relative w-full" id="input-field-{{ $name }}">
-        <input autocomplete="off" type={{ isset($type)? $type: 'text' }} id={{ $name }} name={{ $name }} class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " value="{{old($name) }}" />
+        <input autocomplete="off" type={{ isset($type)? $type: 'text' }} id={{ $name }} name={{ $name }} class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " value="{{$default_value ?? old($name) }}" />
         @if (isset($type) && $type=='password')
             <span class="absolute top-0 right-0 flex items-center justify-center w-12 h-full bg-white border border-gray-300 rounded-tr-lg rounded-br-lg cursor-pointer select-none border-l-transparent peer-focus:border-blue-600 peer-focus:border-l-transparent">hiện</span>
         @endif
