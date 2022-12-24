@@ -24,15 +24,18 @@
         @apply text-pink-600;
     }
 
-    .sidebar-item.active .sidebar-toggle-child {
+    .sidebar-item.active .sidebar-toggle-child,
+    .sidebar-item._active .sidebar-toggle-child {
         @apply rotate-90;
     }
 
-    .sidebar-item.active + .sidebar-children {
+    .sidebar-item.active + .sidebar-children,
+    .sidebar-item._active + .sidebar-children {
         @apply block;
     }
 
-    .sidebar-child.active {
+    .sidebar-child.active,
+    .sidebar-item._active {
         @apply text-pink-600;
     }
 

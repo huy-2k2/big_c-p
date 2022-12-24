@@ -19,7 +19,7 @@
             @endforeach
         @endif
     <li>
-        <a  @if(!isset($item['children'])) href="{{ $item['link'] }}" @endif  class="@if($is_active) active @endif relative flex items-center w-full px-1 py-3 text-gray-600 cursor-pointer hover:text-pink-600 sidebar-item gap-x-2 group">
+        <a  @if(!isset($item['children'])) href="{{ $item['link'] }}" @endif  class="@if($is_active) _active @endif relative flex items-center w-full px-1 py-3 text-gray-600 cursor-pointer hover:text-pink-600 sidebar-item gap-x-2 group">
             <span class="w-10 text-blue-500">
                 {!! $item['icon'] !!}
             </span>
