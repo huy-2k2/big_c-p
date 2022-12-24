@@ -45,6 +45,13 @@ Route::group(['middleware' => ['auth', 'verified', 'accepted', 'token']], functi
         Route::get('/', [FactoryController::class, 'index']);
         Route::get('/create_batch', [FactoryController::class, 'create_batch'])->name('create_batch');
         Route::post('/create_batch', [FactoryController::class, 'create_batch_post'])->name('create_batch_post');
+
+        Route::get('/factory_depots', [FactoryController::class, 'factory_depots'])->name('factory_depots');
+        Route::get('/add_factory_depot', [FactoryController::class, 'add_factory_depot'])->name('add_factory_depot');
+        Route::post('/add_factory_depot', [FactoryController::class, 'post_add_factory_depot'])->name('post_add_factory_depot');
+        Route::get('/delete_factory_depot/{id}', [FactoryController::class, 'delete_factory_depot'])->name('delete_factory_depot');
+        Route::get('/edit_factory_depot/{id}', [FactoryController::class, 'edit_factory_depot'])->name('edit_factory_depot');
+        Route::post('/edit_factory_depot/{id}', [FactoryController::class, 'put_edit_factory_depot'])->name('put_edit_factory_depot');
     });
 
     Route::name('warranty.')->prefix('warranty')->middleware(['author:warranty'])->group(function () {

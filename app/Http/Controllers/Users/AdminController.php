@@ -85,9 +85,21 @@ class AdminController extends Controller
     public function accept_user_store(Request $request)
     {
         $user = User::find($request->user_accept_id);
+        
         if (!$user->account_accepted_at) {
             $user->update(['account_accepted_at' => Carbon::now()]);
+            
+            if($user->role_id == 2 /*factory*/) {
+                DB::table('factories')->insert(['user_id'=>$user->id]);
+            } else if($user->role_id == 3 /*warranty*/) {
+                DB::table('warranties')->insert(['user_id'=>$user->id]);
+            } else if($user->role_id == 4 /*agent*/) {
+                DB::table('agents')->insert(['user_id'=>$user->id]);
+            } else if($user->role_id == 5 /*customer*/) {
+                DB::table('customers')->insert(['user_id'=>$user->id]);
+            }
         }
+        
         return response()->json(true);
     }
 

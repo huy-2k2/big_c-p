@@ -38,6 +38,6 @@
         <span style="color:red">{{ $message }}</span>
       @enderror
     </div>
-    <button type="submit" class="btn btn-primary">Tạo mới</button>
+    <button type="submit" class="btn btn-primary">Chỉnh sửa</button>
   </form>
 @endsection
