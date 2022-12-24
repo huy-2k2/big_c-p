@@ -113,7 +113,7 @@
                 </div>
             </div>
             <div class="relative flex-grow overflow-y-auto custom-scrollbar">
-                <div class="absolute w-full h-full max-w-full">
+                <div class="absolute w-full h-full max-w-full p-5">
                     @yield('content')
                 </div>
             </div>

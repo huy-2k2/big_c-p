@@ -11,20 +11,29 @@ class Product extends Model
 
     protected $fillable = ['depot_id', 'batch_id', 'agent_id', 'customer_id', 'factory_id', 'status', 'warranty_id'];
 
-    
-    public function batch() {
+
+    public function batch()
+    {
         return $this->belongsTo(Batch::class);
     }
 
-    public function depot() {
+    public function depot()
+    {
         return $this->belongsTo(Depot::class);
     }
 
-    public function customer() {
+    public function customer()
+    {
         return $this->belongsTo(Customer::class);
     }
 
-    public function warranty() {
+    public function warranty()
+    {
         return $this->belongsTo(Warranty::class);
+    }
+
+    public function status()
+    {
+        return $this->belongsTo(Status::class);
     }
 }

@@ -33,12 +33,20 @@ Route::group(['middleware' => ['auth', 'verified', 'accepted', 'token']], functi
         Route::post('/store_notifi', [AdminController::class, 'store_notifi'])->name('store_notifi');
         Route::get('/notifi', [AdminController::class, 'notifi'])->name('notifi');
         Route::get('/accept_user', [AdminController::class, 'accept_user'])->name('accept_user');
+        
         Route::get('/product_ranges', [AdminController::class, 'product_ranges'])->name('product_ranges');
         Route::get('/add_product_range', [AdminController::class, 'add_product_range'])->name('add_product_range');
         Route::post('/add_product_range', [AdminController::class, 'post_add_product_range'])->name('post_add_product_range');
         Route::get('/delete_product_range/{id}', [AdminController::class, 'delete_product_range'])->name('delete_product_range');
         Route::get('/edit_product_range/{id}', [AdminController::class, 'edit_product_range'])->name('edit_product_range');
         Route::post('/edit_product_range/{id}', [AdminController::class, 'put_edit_product_range'])->name('put_edit_product_range');
+        
+        Route::get('admin/product_line', [AdminController::class, 'product_line'])->name('admin.product_line');
+        Route::get('admin/create_product_line', [AdminController::class, 'create_product_line'])->name('admin.create_product_line');
+        Route::post('admin/store_product_line', [AdminController::class, 'store_product_line'])->name('admin.store_product_line');
+
+        Route::get('admin/statistic', [AdminController::class, 'product_statistic'])->name('admin.product_statistic');
+        Route::post('admin/print_statistic', [AdminController::class, 'print_product_statistic'])->name('admin.print_statistic');
     });
 
     Route::name('factory.')->prefix('factory')->middleware(['author:factory'])->group(function () {

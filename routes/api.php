@@ -22,5 +22,6 @@ Route::group(['middleware' => ['auth.api']], function () {
     Route::group(['middleware' => ['author.api:admin']], function () {
         Route::post('admin/accept_user/store', [AdminController::class, 'accept_user_store'])->name('admin.accept_user.store');
         Route::post('admin/accept_user/remove', [AdminController::class, 'accept_user_remove'])->name('admin.accept_user.remove');
+        Route::post('admin/product_line/update', [AdminController::class, 'update_product_line'])->name('admin.product_line.update');
     });
 });

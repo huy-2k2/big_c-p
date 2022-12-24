@@ -1,100 +1,40 @@
 @extends('layouts.admin')
 @section('content')
-    <div class="p-5">
+    @php
+        $tbody = []
+    @endphp
+    @foreach ($notifications as $notification)
+        @php
+            $tbody[] = [
+                'data-id' => $notification->id,
+                $notification->title,
+                $notification->content,
+                "$notification->created_at",
+                ['title' => '<a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">chi tiết</a>', 'class' => 'open-notifi-btn']
+
+            ]    
+        @endphp
+    @endforeach
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg custom-scrollbar">
-            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                <caption class="p-5 text-lg font-semibold text-left text-gray-900 bg-white dark:text-white dark:bg-gray-800">
-                    Thông báo
-                </caption>
-                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                    <tr>
-                        <th scope="col" class="px-6 py-3">
-                            STT
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            tiêu đề
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            nội dung
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                           thời gian tạo
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            <span class="sr-only">chi tiết</span>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @php
-                        $stt = 1;    
-                    @endphp
-                    @foreach ($notifications as $notification)
-                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ $stt }}
-                        </th>
-                        <td class="px-6 min-w-[200px] py-4">
-                            {{ $notification['title'] }}
-                        </td>
-                        <td class="px-6 min-w-[300px] py-4">
-                            {{ $notification['content'] }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            {{ $notification['created_at'] }}
-                        </td>
-                        <td class="px-6 py-4 text-right whitespace-nowrap open-notifi-btn" data-index='{{ $notification->id }}'>
-                            <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">chi tiết</a>
-                        </td>
-                    </tr>
-                        @php
-                            $stt++;    
-                        @endphp
-                    @endforeach
-                </tbody>
-            </table>
+            @include('components.table', ['title' => 'thông báo', 'ths' => ['tiêu đề', 'nội dung', 'thời gian tạo', ['title' => 'chi tiết', 'sr_only' => true]], 'tbody' => $tbody])
         </div>  
-    </div>
     @foreach ($notifications as $notification)
         <div id="notification-{{ $notification->id }}" class="fixed inset-0 z-30 items-center justify-center hidden p-5 bg-black notifi bg-opacity-20">
             <div class="relative overflow-x-auto shadow-md sm:rounded-lg max-h-[500px] custom-scrollbar overflow-y-auto">
                 @include('components.button_close', ['id' => "close-notifi-{$notification->id}", 'data_index' => $notification->id, 'btn_close_class' => 'close-detail-notifi'])
-                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                        <tr>
-                            <th scope="col" class="px-6 py-3">
-                                STT
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                tên người dùng
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                thời gian đọc
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @php
-                            $stt_ = 0;    
-                        @endphp
-                        @foreach ($notification->users as $user)
-                            @php
-                                $stt_++;    
-                            @endphp
-                               <tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
-                                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    {{ $stt_ }}
-                                </th>
-                                <td data-id='{{ $user->id }}' class="px-6 py-4 underline cursor-pointer open-user-detail-btn">
-                                    {{ $user->name }}
-                                </td>
-                                <td class="px-6 py-4 readed_time_{{ $user->id }}">
-                                    {{ $user->pivot->readed_at ?? 'chưa đọc' }}
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                @php
+                    $_tbody = []     
+                @endphp
+                @foreach ($notification->users as $user)
+                    @php
+                        $_tbody[] = [
+                            'data-id' => $user->id,
+                            ['title' => $user->name, 'class' => 'open-user-detail-btn underline cursor-pointer'],
+                            ['title' => $user->pivot->readed_at ?? 'chưa đọc', 'class' => "readed_time_$user->id"]
+                        ]    
+                    @endphp
+                @endforeach
+                @include('components.table', ['title' => '', 'ths' => ['tên người dùng', 'thời gian đọc'] , 'tbody' => $_tbody])
             </div>
         </div>
     @endforeach
@@ -111,7 +51,7 @@
             });
             open_notifi_btns.forEach(btn => {
                 btn.onclick = function() {
-                    const index = this.getAttribute('data-index')
+                    const index = this.getAttribute('data-id')
                     document.querySelector(`#notification-${index}`).classList.add('active')
                 }
             });

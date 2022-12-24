@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Users;
 use App\Events\CreateNotifiEvent;
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
+use App\Models\Range;
+use App\Models\Status;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -16,8 +18,7 @@ class AdminController extends Controller
 
     public function index()
     {
-        $users = User::all();
-        return view('admin.main', ['users' => $users]);
+        return redirect()->route('admin.product_line');
     }
 
     public function create_notifi()
@@ -186,5 +187,68 @@ class AdminController extends Controller
         ]);
 
         return redirect()->route('admin.product_ranges');
+    }
+  
+    public function product_line()
+    {
+        $users = User::all();
+        $product_lines = Range::all();
+        return view('admin.product_line', ['users' => $users, 'product_lines' => $product_lines]);
+    }
+
+    public function create_product_line()
+    {
+        $users = User::all();
+        return view('admin.create_product_line', ['users' => $users]);
+    }
+
+    public function store_product_line(Request $request)
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'min:8'],
+            'property' => ['required', 'string', 'min:36'],
+            'warranty_period_time' => ['required', 'integer', 'min:0']
+        ]);
+
+        Range::create(
+            [
+                'name' => $request->name,
+                'property' => $request->property,
+                'warranty_period_time' => $request->warranty_period_time,
+            ]
+        );
+        return Redirect::back()->with(['message' => 'tạo dòng sản phẩm thành công']);
+    }
+
+    public function update_product_line(Request $request)
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'min:8'],
+            'property' => ['required', 'string', 'min:36'],
+            'warranty_period_time' => ['required', 'integer', 'min:0']
+        ]);
+
+        Range::find($request->product_line_id)->update(
+            [
+                'name' => $request->name,
+                'property' => $request->property,
+                'warranty_period_time' => $request->warranty_period_time,
+            ]
+        );
+
+        return response()->json([1, 2, 3]);
+    }
+
+    public function product_statistic()
+    {
+        $vendors = User::get_users_with_role('vendor');
+        $warranty_centers = User::get_users_with_role('warranty_center');
+        $factories = User::get_users_with_role('factory');
+        return view('admin.product_statistic', ['users' => User::all(), 'statuses' => Status::all(), 'vendors' => $vendors, 'warranty_centers' => $warranty_centers, 'factories' => $factories]);
+    }
+
+    public function print_product_statistic(Request $request)
+    {
+        return $request;
     }
 }

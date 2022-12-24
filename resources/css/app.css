@@ -20,11 +20,23 @@
         @apply lg:hidden;
     }
 
-    .sidebar-item.active .sidebar-toggle-child {
+    .sidebar-item.active {
+        @apply text-pink-600;
+    }
+
+    .sidebar-item.active .sidebar-toggle-child,
+    .sidebar-item._active .sidebar-toggle-child {
         @apply rotate-90;
     }
-    .sidebar-item.active + .sidebar-children {
+
+    .sidebar-item.active + .sidebar-children,
+    .sidebar-item._active + .sidebar-children {
         @apply block;
+    }
+
+    .sidebar-child.active,
+    .sidebar-item._active {
+        @apply text-pink-600;
     }
 
     #user-menu.active {
@@ -60,24 +72,24 @@
         @apply block;
     }
 
-    .select-user-list.active + .select-user {
+    .select-option-list.active + .select-option {
         @apply border-blue-500;
     }
 
-    .select-user-list.active {
+    .select-option-list.active {
         @apply block;
     }
 
-    .select-user-list.active + .select-user .select-user-label,
-    .select-user.valid .select-user-label {
+    .select-option-list.active + .select-option .select-option-label,
+    .select-option.valid .select-option-label {
         @apply top-0 left-0 text-blue-500 scale-75;
     }
 
-    .select-user-list.active + .select-user .select-user-icon {
+    .select-option-list.active + .select-option .select-option-icon {
         @apply rotate-180;
     }
 
-    .select-user-list .select-choose.active {
+    .select-option-list .select-choose.active {
         @apply underline;
     }
 
@@ -87,6 +99,13 @@
 
     .notifi.active {
         @apply flex;
+    }
+    .product-line.active {
+        @apply block;
+    }
+
+    .refresh_product_line_btn.active {
+        @apply text-green-600 pointer-events-auto;
     }
 }
 
