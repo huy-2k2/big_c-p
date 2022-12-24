@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('depots', function (Blueprint $table) {
             $table->id();
+            $table->string('depot_name');
             $table->unsignedBigInteger('owner_id');
-            $table->string('owner_name');
             $table->integer('size');    
             $table->string('status');
             $table->timestamps();
