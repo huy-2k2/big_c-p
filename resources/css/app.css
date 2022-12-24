@@ -20,11 +20,20 @@
         @apply lg:hidden;
     }
 
+    .sidebar-item.active {
+        @apply text-pink-600;
+    }
+
     .sidebar-item.active .sidebar-toggle-child {
         @apply rotate-90;
     }
+
     .sidebar-item.active + .sidebar-children {
         @apply block;
+    }
+
+    .sidebar-child.active {
+        @apply text-pink-600;
     }
 
     #user-menu.active {
