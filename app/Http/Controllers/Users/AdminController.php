@@ -22,10 +22,10 @@ class AdminController extends Controller
     public function create_notifi()
     {
         $users = User::all();
-        $vendors = User::get_users_with_role('vendor');
-        $warranty_centers = User::get_users_with_role('warranty_center');
+        $agents = User::get_users_with_role('agent');
+        $warranties = User::get_users_with_role('warranty');
         $factories = User::get_users_with_role('factory');
-        return view('admin.create_notifi', ['users' => $users, 'vendors' => $vendors, 'warranty_centers' => $warranty_centers, 'factories' => $factories]);
+        return view('admin.create_notifi', ['users' => $users, 'agents' => $agents, 'warranties' => $warranties, 'factories' => $factories]);
     }
 
     public function store_notifi(Request $request)
@@ -34,7 +34,7 @@ class AdminController extends Controller
             'title' => ['required', 'string', 'min:8'],
             'content' => ['required', 'string', 'min:16'],
         ]);
-        if (!$request->has('vendor') && !$request->has('factory') && !$request->has('warranty_center')) {
+        if (!$request->has('agent') && !$request->has('factory') && !$request->has('warranty')) {
             return back()->withInput();
         }
 
@@ -45,8 +45,8 @@ class AdminController extends Controller
 
         $datas_users = [
             ['role' => 'factory', 'ids' => $request->factory ?? []],
-            ['role' => 'warranty_center', 'ids' => $request->warranty_center ?? []],
-            ['role' => 'vendor', 'ids' => $request->vendor ?? []],
+            ['role' => 'warranty', 'ids' => $request->warranty ?? []],
+            ['role' => 'agent', 'ids' => $request->agent ?? []],
         ];
 
         foreach ($datas_users as $data_users) {

@@ -3,8 +3,8 @@
 use App\Http\Controllers\Auth\ChangePasswordController;
 use App\Http\Controllers\Users\AdminController;
 use App\Http\Controllers\Users\FactoryController;
-use App\Http\Controllers\Users\VendorController;
-use App\Http\Controllers\Users\WarrantyCenterController;
+use App\Http\Controllers\Users\AgentController;
+use App\Http\Controllers\Users\WarrantyController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -39,12 +39,12 @@ Route::group(['middleware' => ['auth', 'verified', 'accepted', 'token']], functi
         Route::get('factory', [FactoryController::class, 'index']);
     });
 
-    Route::group(['middleware' => 'author:warranty_center'], function () {
-        Route::get('warranty_center', [WarrantyCenterController::class, 'index']);
+    Route::group(['middleware' => 'author:warranty'], function () {
+        Route::get('warranty', [WarrantyController::class, 'index']);
     });
 
-    Route::group(['middleware' => 'author:vendor'], function () {
-        Route::get('vendor', [VendorController::class, 'index']);
+    Route::group(['middleware' => 'author:agent'], function () {
+        Route::get('agent', [AgentController::class, 'index']);
     });
 
     Route::post('password/change', [ChangePasswordController::class, 'index'])->name('password.change');

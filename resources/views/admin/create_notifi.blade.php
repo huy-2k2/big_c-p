@@ -5,9 +5,9 @@
                 @csrf
                 @include('components.input', ['name' => 'title', 'label' => 'tiêu đề thông báo'])
                 @include('components.textarea', ['name' => 'content', 'label' => 'nội dung thông báo'])
-                @include('components.input_select_user', ['name' => 'vendor', 'label' => 'chọn đại lý', 'users' => $vendors])
+                @include('components.input_select_user', ['name' => 'agent', 'label' => 'chọn đại lý', 'users' => $agents])
                 @include('components.input_select_user', ['name' => 'factory', 'label' => 'chọn cơ sở xản xuất', 'users' => $factories])
-                @include('components.input_select_user', ['name' => 'warranty_center', 'label' => 'chọn trung tâm bảo hành', 'users' => $warranty_centers])
+                @include('components.input_select_user', ['name' => 'warranty', 'label' => 'chọn trung tâm bảo hành', 'users' => $warranties])
                 @include('components.button_submit', ['text' => 'gửi thông báo'])
             </form>
         </div>
