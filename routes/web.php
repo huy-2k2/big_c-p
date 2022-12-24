@@ -27,23 +27,25 @@ Route::group(['middleware' => ['auth', 'verified', 'accepted', 'token']], functi
 
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-    Route::group(['middleware' => 'author:admin'], function () {
-        Route::get('admin', [AdminController::class, 'index']);
-        Route::get('admin/create_notifi', [AdminController::class, 'create_notifi'])->name('admin.create_notifi');
-        Route::post('admin/store_notifi', [AdminController::class, 'store_notifi'])->name('admin.store_notifi');
-        Route::get('admin/notifi', [AdminController::class, 'notifi'])->name('admin.notifi');
-        Route::get('admin/accept_user', [AdminController::class, 'accept_user'])->name('admin.accept_user');
+    Route::name('admin.')->prefix('admin')->middleware(['author:admin'])->group(function () {
+        Route::get('/', [AdminController::class, 'index']);
+        Route::get('/create_notifi', [AdminController::class, 'create_notifi'])->name('create_notifi');
+        Route::post('/store_notifi', [AdminController::class, 'store_notifi'])->name('store_notifi');
+        Route::get('/notifi', [AdminController::class, 'notifi'])->name('notifi');
+        Route::get('/accept_user', [AdminController::class, 'accept_user'])->name('accept_user');
     });
 
-    Route::group(['middleware' => 'author:factory'], function () {
-        Route::get('factory', [FactoryController::class, 'index']);
+    Route::name('factory.')->prefix('factory')->middleware(['author:factory'])->group(function () {
+        Route::get('/', [FactoryController::class, 'index']);
+        Route::get('/create_batch', [FactoryController::class, 'create_batch'])->name('create_batch');
+        Route::post('/create_batch', [FactoryController::class, 'create_batch_post']);
     });
 
-    Route::group(['middleware' => 'author:warranty'], function () {
-        Route::get('warranty', [WarrantyController::class, 'index']);
+    Route::name('warranty.')->prefix('warranty')->middleware(['author:warranty'])->group(function () {
+        Route::get('/', [WarrantyController::class, 'index']);
     });
 
-    Route::group(['middleware' => 'author:agent'], function () {
+    Route::name('agent.')->prefix('agent')->middleware(['author:agent'])->group(function () {
         Route::get('agent', [AgentController::class, 'index']);
     });
 
