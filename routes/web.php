@@ -33,12 +33,18 @@ Route::group(['middleware' => ['auth', 'verified', 'accepted', 'token']], functi
         Route::post('/store_notifi', [AdminController::class, 'store_notifi'])->name('store_notifi');
         Route::get('/notifi', [AdminController::class, 'notifi'])->name('notifi');
         Route::get('/accept_user', [AdminController::class, 'accept_user'])->name('accept_user');
+        Route::get('/product_ranges', [AdminController::class, 'product_ranges'])->name('product_ranges');
+        Route::get('/add_product_range', [AdminController::class, 'add_product_range'])->name('add_product_range');
+        Route::post('/add_product_range', [AdminController::class, 'post_add_product_range'])->name('post_add_product_range');
+        Route::get('/delete_product_range/{id}', [AdminController::class, 'delete_product_range'])->name('delete_product_range');
+        Route::get('/edit_product_range/{id}', [AdminController::class, 'edit_product_range'])->name('edit_product_range');
+        Route::post('/edit_product_range/{id}', [AdminController::class, 'put_edit_product_range'])->name('put_edit_product_range');
     });
 
     Route::name('factory.')->prefix('factory')->middleware(['author:factory'])->group(function () {
         Route::get('/', [FactoryController::class, 'index']);
         Route::get('/create_batch', [FactoryController::class, 'create_batch'])->name('create_batch');
-        Route::post('/create_batch', [FactoryController::class, 'create_batch_post']);
+        Route::post('/create_batch', [FactoryController::class, 'create_batch_post'])->name('create_batch_post');
     });
 
     Route::name('warranty.')->prefix('warranty')->middleware(['author:warranty'])->group(function () {

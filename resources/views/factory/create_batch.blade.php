@@ -1,14 +1,17 @@
 @extends('layouts.factory')
 @section('content')
-<form>
+<form method="post" action='{{ route('factory.create_batch_post') }}'>
   <div class="form-group">
-    <label for="exampleInputEmail1">Email address</label>
-    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+    <label for="range">Dòng sản phẩm</label>
+    <input type="range" class="form-control" id="range" name="range">
   </div>
   <div class="form-group">
-    <label for="exampleInputPassword1">Password</label>
-    <input type="password" class="form-control" id="exampleInputPassword1">
+    <label for="quantity">Số lượng</label>
+    <input type="quantity" class="form-control" id="quantity" name="quantity">
+  </div>
+  <div class="form-group">
+    <label for="depot">Kho chứa</label>
+    <input type="depot" class="form-control" id="depot" name="depot">
   </div>
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>

@@ -15,33 +15,36 @@
 @endsection
 
 @section('content')
-    @foreach ($users as $user)
-        <div id="account-info-{{ $user->id }}" class="fixed top-0 left-0 z-30 hidden w-full min-h-screen p-5 bg-gray-900 account-detail bg-opacity-20">
-            <div class="overflow-hidden relative w-[800px] max-h-[500px] custom-scrollbar overflow-y-auto max-w-full mx-auto mt-20 bg-white rounded-xl px-5 py-10">
-                <div class="mb-8">
-                    @include('components.heading', ['text' => 'Thông tin tài khoản'])
-                </div>
-                @include('components.account_info', ['name' => $user->name, 'email' => $user->email, 'role' => $user->role->name, 'province' => $user->address->province, 'district' => $user->address->district, 'sub_district' => $user->address->sub_district, 'created_at' => $user->created_at, 'account_accepted_at' => $user->account_accepted_at ?? 'chưa chấp thuận'])
-                @include('components.button_close', ['id' => "close-account-{$user->id}", 'data_index' => $user->id, 'btn_close_class' => 'close-detail-account'])
-            </div>
-        </div>
-    @endforeach
-    <script>
-        (() => {
-            const open_user_detail_btns = document.querySelectorAll('.open-user-detail-btn')
-            const close_detail_account_btns = document.querySelectorAll('.close-detail-account')
-            open_user_detail_btns.forEach(open_btn => {
-                open_btn.onclick = function() {
-                    document.querySelector(`#account-info-${this.getAttribute('data-id')}`).classList.add('active')
-                }
-            });
-            close_detail_account_btns.forEach(close_btn => {
-                close_btn.onclick = function() {
-                    const id = this.getAttribute('data-index')
-                    console.log(id);
-                    document.querySelector(`#account-info-${id}`).classList.remove('active')
-                }
-            })
-        })()
-    </script>
+  <a href="{{ route('admin.add_product_range') }}" class="btn btn-primary"><i class="fa-solid fa-plus"></i>Thêm dòng sản phẩm</a>
+  <hr/>
+
+  <div class="row container">
+    <form class="d-flex">
+      <input class="form-control me-2" type="search" 
+      placeholder="Search by name" aria-label="Search" 
+      name="keywords" value="{{ request() -> keywords }}">
+      <button class="btn btn-success" type="submit">Search</button>
+    </form>
+  </div>
+
+  <table class="table table-striped table-hover">
+    <thead>
+      <th>Id</th>
+      <th>Tên dòng</th>
+      <th>Thuộc tính</th>
+      <th>Thời gian bảo hành</th>
+    </thead>
+    <tbody>
+      @foreach ($ranges as $range)
+        <tr>
+          <td>{{ $range -> id }}</td>
+          <td>{{ $range -> name }}</td>
+          <td>{{ $range -> property }}</td>
+          <td>{{ $range -> warranty_period_time }}</td>
+          <td><button class="btn btn-info"><a href="{{ route('admin.edit_product_range', ['id' => $range->id]) }}">Sửa</a></button></td>
+          <td><button class="btn btn-danger"><a href="{{ route('admin.delete_product_range', ['id' => $range->id]) }}">Xóa</a></button></td>
+        </tr>
+      @endforeach
+    </tbody>
+  </table>
 @endsection

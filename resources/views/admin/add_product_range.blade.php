@@ -15,33 +15,29 @@
 @endsection
 
 @section('content')
-    @foreach ($users as $user)
-        <div id="account-info-{{ $user->id }}" class="fixed top-0 left-0 z-30 hidden w-full min-h-screen p-5 bg-gray-900 account-detail bg-opacity-20">
-            <div class="overflow-hidden relative w-[800px] max-h-[500px] custom-scrollbar overflow-y-auto max-w-full mx-auto mt-20 bg-white rounded-xl px-5 py-10">
-                <div class="mb-8">
-                    @include('components.heading', ['text' => 'Thông tin tài khoản'])
-                </div>
-                @include('components.account_info', ['name' => $user->name, 'email' => $user->email, 'role' => $user->role->name, 'province' => $user->address->province, 'district' => $user->address->district, 'sub_district' => $user->address->sub_district, 'created_at' => $user->created_at, 'account_accepted_at' => $user->account_accepted_at ?? 'chưa chấp thuận'])
-                @include('components.button_close', ['id' => "close-account-{$user->id}", 'data_index' => $user->id, 'btn_close_class' => 'close-detail-account'])
-            </div>
-        </div>
-    @endforeach
-    <script>
-        (() => {
-            const open_user_detail_btns = document.querySelectorAll('.open-user-detail-btn')
-            const close_detail_account_btns = document.querySelectorAll('.close-detail-account')
-            open_user_detail_btns.forEach(open_btn => {
-                open_btn.onclick = function() {
-                    document.querySelector(`#account-info-${this.getAttribute('data-id')}`).classList.add('active')
-                }
-            });
-            close_detail_account_btns.forEach(close_btn => {
-                close_btn.onclick = function() {
-                    const id = this.getAttribute('data-index')
-                    console.log(id);
-                    document.querySelector(`#account-info-${id}`).classList.remove('active')
-                }
-            })
-        })()
-    </script>
+  <form method="POST" action='{{ route('admin.post_add_product_range') }}'>
+    @csrf
+    <div class="form-group">
+      <label for="name">Tên dòng sản phẩm</label>
+      <input type="text" class="form-control" id="name" name="name">
+      @error('name')
+        <span style="color:red">{{ $message }}</span>
+      @enderror
+    </div>
+    <div class="form-group">
+      <label for="property">Thuộc tính</label>
+      <input type="text" class="form-control" id="property" name="property">
+      @error('property')
+        <span style="color:red">{{ $message }}</span>
+      @enderror
+    </div>
+    <div class="form-group">
+      <label for="warranty_period_time">Thời gian bảo hành</label>
+      <input type="text" class="form-control" id="warranty_period_time" name="warranty_period_time">
+      @error('warranty_period_time')
+        <span style="color:red">{{ $message }}</span>
+      @enderror
+    </div>
+    <button type="submit" class="btn btn-primary">Tạo mới</button>
+  </form>
 @endsection
