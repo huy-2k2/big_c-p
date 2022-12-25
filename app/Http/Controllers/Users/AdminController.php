@@ -12,11 +12,11 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\DB;
 
 
 class AdminController extends Controller
 {
-
     public function index()
     {
         return redirect()->route('admin.product_line');
@@ -25,10 +25,10 @@ class AdminController extends Controller
     public function create_notifi()
     {
         $users = User::all();
-        $vendors = User::get_users_with_role('vendor');
-        $warranty_centers = User::get_users_with_role('warranty_center');
+        $agents = User::get_users_with_role('agent');
+        $warranties = User::get_users_with_role('warranty');
         $factories = User::get_users_with_role('factory');
-        return view('admin.create_notifi', ['users' => $users, 'vendors' => $vendors, 'warranty_centers' => $warranty_centers, 'factories' => $factories]);
+        return view('admin.create_notifi', ['users' => $users, 'agents' => $agents, 'warranties' => $warranties, 'factories' => $factories]);
     }
 
     public function store_notifi(Request $request)
@@ -37,7 +37,7 @@ class AdminController extends Controller
             'title' => ['required', 'string', 'min:8'],
             'content' => ['required', 'string', 'min:16'],
         ]);
-        if (!$request->has('vendor') && !$request->has('factory') && !$request->has('warranty_center')) {
+        if (!$request->has('agent') && !$request->has('factory') && !$request->has('warranty')) {
             return back()->withInput();
         }
 
@@ -48,8 +48,8 @@ class AdminController extends Controller
 
         $datas_users = [
             ['role' => 'factory', 'ids' => $request->factory ?? []],
-            ['role' => 'warranty_center', 'ids' => $request->warranty_center ?? []],
-            ['role' => 'vendor', 'ids' => $request->vendor ?? []],
+            ['role' => 'warranty', 'ids' => $request->warranty ?? []],
+            ['role' => 'agent', 'ids' => $request->agent ?? []],
         ];
 
         foreach ($datas_users as $data_users) {
@@ -87,9 +87,21 @@ class AdminController extends Controller
     public function accept_user_store(Request $request)
     {
         $user = User::find($request->user_accept_id);
+        
         if (!$user->account_accepted_at) {
             $user->update(['account_accepted_at' => Carbon::now()]);
+            
+            if($user->role_id == 2 /*factory*/) {
+                DB::table('factories')->insert(['user_id'=>$user->id]);
+            } else if($user->role_id == 3 /*warranty*/) {
+                DB::table('warranties')->insert(['user_id'=>$user->id]);
+            } else if($user->role_id == 4 /*agent*/) {
+                DB::table('agents')->insert(['user_id'=>$user->id]);
+            } else if($user->role_id == 5 /*customer*/) {
+                DB::table('customers')->insert(['user_id'=>$user->id]);
+            }
         }
+        
         return response()->json(true);
     }
 
@@ -102,7 +114,6 @@ class AdminController extends Controller
         }
         return response()->json(true);
     }
-
 
     public function product_line()
     {
@@ -122,14 +133,14 @@ class AdminController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'min:8'],
             'property' => ['required', 'string', 'min:36'],
-            'warranty_period_time' => ['required', 'integer', 'min:0']
+            'warranty_time' => ['required', 'integer', 'min:0']
         ]);
 
         Range::create(
             [
                 'name' => $request->name,
                 'property' => $request->property,
-                'warranty_period_time' => $request->warranty_period_time,
+                'warranty_time' => $request->warranty_time,
             ]
         );
         return Redirect::back()->with(['message' => 'tạo dòng sản phẩm thành công']);
@@ -140,14 +151,14 @@ class AdminController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'min:8'],
             'property' => ['required', 'string', 'min:36'],
-            'warranty_period_time' => ['required', 'integer', 'min:0']
+            'warranty_time' => ['required', 'integer', 'min:0']
         ]);
 
         Range::find($request->product_line_id)->update(
             [
                 'name' => $request->name,
                 'property' => $request->property,
-                'warranty_period_time' => $request->warranty_period_time,
+                'warranty_time' => $request->warranty_time,
             ]
         );
 

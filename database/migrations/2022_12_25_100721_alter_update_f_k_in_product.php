@@ -13,12 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('ranges', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('property');
-            $table->string('warranty_time');
-            $table->timestamps();
+        Schema::table('products', function (Blueprint $table) {
+            $table->unsignedBigInteger('batch_id')->nullable()->change();
         });
     }
 
@@ -29,6 +25,9 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('ranges');
+        Schema::table('products', function (Blueprint $table) {
+            $table->unsignedBigInteger('batch_id')->change();
+
+        });
     }
 };

@@ -9,7 +9,7 @@ class Depot extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['owner_id', 'owner_name', 'size', 'status'];
+    protected $fillable = ['depot_name', 'owner_id', 'size', 'status'];
 
     public function product() {
         return $this->hasMany(Product::class);

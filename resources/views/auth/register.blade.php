@@ -11,7 +11,7 @@
            
         @include('components.input', ['type' => 'password', 'name' => 'password_confirmation', 'label' => 'nhập lại mật khẩu'])
        
-        @include('components.input_select', ['name' => 'role_id', 'label' => 'chọn vai trò', 'options' => [['title'=> 'nhà máy sản xuất', 'value' => 2 ], ['title' => 'trung tâm bảo hành', 'value' => 3], ['title' => 'đại lý bán hàng', 'value' => 4]]])
+        @include('components.input_select', ['name' => 'role_id', 'label' => 'chọn vai trò', 'options' => [['title'=> 'nhà máy sản xuất', 'value' => 2 ], ['title' => 'trung tâm bảo hành', 'value' => 3], ['title' => 'đại lý bán hàng', 'value' => 4], ['title' => 'người mua', 'value' => 5]]])
         
         @include('components.inputs_address')
         
