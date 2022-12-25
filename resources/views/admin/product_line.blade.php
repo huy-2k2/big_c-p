@@ -8,7 +8,7 @@
             $tbody[] = [
                 'data-id' => $product_line->id,
                 "<input data-id='$product_line->id' data-origin='$product_line->name' class='product_line-input product_line-name-$product_line->id px-2 py-1 border border-transparent focus:outline-none focus:border-blue-600' value='$product_line->name'/>",
-                "<input data-id='$product_line->id' data-origin='$product_line->warranty_period_time' class='product_line-input product_line-period-$product_line->id px-2 py-1 border border-transparent focus:outline-none focus:border-blue-600' value='$product_line->warranty_period_time'/>",
+                "<input data-id='$product_line->id' data-origin='$product_line->warranty_time' class='product_line-input product_line-period-$product_line->id px-2 py-1 border border-transparent focus:outline-none focus:border-blue-600' value='$product_line->warranty_time'/>",
                 "<div data-id='$product_line->id' data-origin='$product_line->property' contenteditable='true' class='product_line-input product_line-property-$product_line->id px-2 py-1 border border-transparent focus:outline-none focus:border-blue-600'>$product_line->property</div>",
                 ['title' => 'thay đổi', 'class' => 'font-medium hover:underline text-blue-600 cursor-pointer alter_product_line_btn'],
                 ['title' => 'hoàn tác', 'class' => "refresh_product_line-$product_line->id font-medium hover:underline text-gray-600 cursor-pointer pointer-events-none refresh_product_line_btn"],
@@ -65,7 +65,7 @@
                         'product_line_id': id,
                         'name': name.value,
                         'property': property.innerText,
-                        'warranty_period_time': period.value
+                        'warranty_time': period.value
                     }).then(({data}) => {
                         name.setAttribute('data-origin', name.value)
                         period.setAttribute('data-origin', period.value)
