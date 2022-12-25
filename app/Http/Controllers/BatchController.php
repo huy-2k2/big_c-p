@@ -7,7 +7,8 @@ use App\Http\Requests\StoreBatchRequest;
 use App\Http\Requests\UpdateBatchRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
+use Carbon\Carbon;
+use App\Models\Product;
 
 class BatchController extends Controller
 {
@@ -41,8 +42,39 @@ class BatchController extends Controller
             }
 
             if($is_true_depot) {
+                $count_quantity_depot = Product::count_quantity_product(['depot_id'], [$request->input('depot')]);
+                $size_depot = (DB::table('depots')->where('id', '=', $request->input('depot'))->first())->size;
+                if($request->input('quantity') + $count_quantity_depot > $size_depot) {
+                    return false;
+                }
+                
+                $current_batch_id = DB::table('batches')->insertGetId([
+                    'quantity' => $request->input('quantity'),
+                    'range_id' => $request->input('range'),
+                    'factory_id' => $owner_id,
+                    'status_id' => 1,
+                    'manufacturing_date' => Carbon::now()
+                ]);
+
+                for($i = 0; $i < $request->input('quantity'); $i++) {
+                    DB::table('products')->insert([
+                        'batch_id' => $current_batch_id,
+                        'depot_id' => $request->input('depot'),
+                        'agent_id' => null,                        
+                        'factory_id' => $owner_id,
+                        'warranty_count' => 0,
+                        'warranty_id' => null,
+                        'customer_buy_time' => null,
+                        'customer_id' => null,
+                        'status_id' => 1,
+                        'owner_id' => $owner_id,
+                        'range_id' => $request->input('range')
+                    ]);
+                }
+
                 return true;
             } else {
+                dd(2);
                 return false;
             }
         } else {

@@ -5,7 +5,7 @@
         @csrf
         @include('components.input', ['name' => 'name', 'label' => 'tên dòng sản phẩm'])
         @include('components.textarea', ['name' => 'property', 'label' => 'thuộc tính dòng sản phẩm'])
-        @include('components.input', ['name' => 'warranty_period_time', 'label' => 'số tháng bảo hành'])
+        @include('components.input', ['name' => 'warranty_time', 'label' => 'số tháng bảo hành'])
         @include('components.button_submit', ['text' => 'thêm dòng sản phẩm'])
     </form>
 </div>

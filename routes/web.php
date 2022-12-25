@@ -33,7 +33,7 @@ Route::group(['middleware' => ['auth', 'verified', 'accepted', 'token']], functi
         Route::post('/store_notifi', [AdminController::class, 'store_notifi'])->name('store_notifi');
         Route::get('/notifi', [AdminController::class, 'notifi'])->name('notifi');
         Route::get('/accept_user', [AdminController::class, 'accept_user'])->name('accept_user');
-        
+
         Route::get('product_line', [AdminController::class, 'product_line'])->name('product_line');
         Route::get('create_product_line', [AdminController::class, 'create_product_line'])->name('create_product_line');
         Route::post('store_product_line', [AdminController::class, 'store_product_line'])->name('store_product_line');
@@ -54,7 +54,10 @@ Route::group(['middleware' => ['auth', 'verified', 'accepted', 'token']], functi
         Route::get('/edit_factory_depot/{id}', [FactoryController::class, 'edit_factory_depot'])->name('edit_factory_depot');
         Route::post('/edit_factory_depot/{id}', [FactoryController::class, 'put_edit_factory_depot'])->name('put_edit_factory_depot');
 
-        Route::get('/export_excels', [FactoryController::class, 'export_excels'])->name('export_excels');
+        Route::get('/transfer_prod_to_agent', [FactoryController::class, 'transfer_prod_to_agent'])->name('transfer_prod_to_agent');
+        Route::post('/transfer_prod_to_agent', [FactoryController::class, 'post_transfer_prod_to_agent'])->name('post_transfer_prod_to_agent');
+
+        Route::get('/depot_product', [FactoryController::class, 'depot_product'])->name('depot_product');
     });
 
     Route::name('warranty.')->prefix('warranty')->middleware(['author:warranty'])->group(function () {

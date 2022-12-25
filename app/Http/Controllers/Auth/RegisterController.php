@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Address;
+use App\Models\Agent;
+use App\Models\Factory;
 use App\Providers\RouteServiceProvider;
 use App\Models\User;
+use App\Models\Warranty;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -83,6 +86,11 @@ class RegisterController extends Controller
 
         ]);
 
+        $class_name = "App\\models\\" . ucfirst($address->user->role->name);
+
+        call_user_func([$class_name, 'create'], [
+            'id' => $address->user->id
+        ]);
         return $address->user;
     }
 }
