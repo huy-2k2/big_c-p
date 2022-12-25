@@ -73,4 +73,8 @@ class FactoryController extends Controller
 
         return redirect()->route('factory.factory_depots');
     }
+
+    public function export_excels() {
+        return Excel::download(new ExcelsExport, 'factory.xlsx');
+    }
 }

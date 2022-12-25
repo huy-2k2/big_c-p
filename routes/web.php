@@ -53,6 +53,8 @@ Route::group(['middleware' => ['auth', 'verified', 'accepted', 'token']], functi
         Route::get('/delete_factory_depot/{id}', [FactoryController::class, 'delete_factory_depot'])->name('delete_factory_depot');
         Route::get('/edit_factory_depot/{id}', [FactoryController::class, 'edit_factory_depot'])->name('edit_factory_depot');
         Route::post('/edit_factory_depot/{id}', [FactoryController::class, 'put_edit_factory_depot'])->name('put_edit_factory_depot');
+
+        Route::get('/export_excels', [FactoryController::class, 'export_excels'])->name('export_excels');
     });
 
     Route::name('warranty.')->prefix('warranty')->middleware(['author:warranty'])->group(function () {
