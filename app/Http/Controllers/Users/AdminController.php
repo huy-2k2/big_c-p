@@ -27,8 +27,13 @@ class AdminController extends Controller
     public function create_notifi()
     {
         $users = User::all();
+<<<<<<< HEAD
         $agents = User::get_users_with_role('agent');
         $warranties = User::get_users_with_role('warranty');
+=======
+        $vendors = User::get_users_with_role('agent');
+        $warranty_centers = User::get_users_with_role('warranty');
+>>>>>>> 2fb5d7c (ba)
         $factories = User::get_users_with_role('factory');
         return view('admin.create_notifi', ['users' => $users, 'agents' => $agents, 'warranties' => $warranties, 'factories' => $factories]);
     }
@@ -164,13 +169,13 @@ class AdminController extends Controller
             ]
         );
 
-        return response()->json([1, 2, 3]);
+        return response()->json(true);
     }
 
     public function product_statistic()
     {
-        $vendors = User::get_users_with_role('vendor');
-        $warranty_centers = User::get_users_with_role('warranty_center');
+        $vendors = User::get_users_with_role('agent');
+        $warranty_centers = User::get_users_with_role('warranty');
         $factories = User::get_users_with_role('factory');
         return view('admin.product_statistic', ['users' => User::all(), 'statuses' => Status::all(), 'vendors' => $vendors, 'warranty_centers' => $warranty_centers, 'factories' => $factories]);
     }
@@ -180,7 +185,6 @@ class AdminController extends Controller
         $list_products = [];
         $data_inputs = $request->all();
         unset($data_inputs['_token']);
-
         if (count($data_inputs) == 0)
             $list_products[] = Product::excel_export(Product::all());
         else {
@@ -196,7 +200,6 @@ class AdminController extends Controller
                 }
             }
         }
-
-        return (new ExcelsExport($list_products, []))->download('product.xlsx');
+        return (new ExcelsExport($list_products, ['name1, nam2']))->download('product.xlsx');
     }
 }

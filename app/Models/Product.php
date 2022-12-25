@@ -75,8 +75,8 @@ class Product extends Model
     {
         foreach ($products as $product) {
             // $product['range'] = $product->batch->range->name;
-            $product['status'] = $product->status->name;
-            $product['factory'] = $product->factory->user->name;
+            // $product['status'] = $product->status->name;
+            // $product['factory'] = $product->factory->user->name;
             unset($product['factory_id'], $product['agent_id'], $product['warranty_count'], $product['warranty_id'], $product['status_id'], $product['batch_id'], $product['depot_id']);
             ///......
         }
