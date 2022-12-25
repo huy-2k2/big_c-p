@@ -8,10 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class Warranty extends Model
 {
     use HasFactory;
-    protected $fillable = ['user_id'];
+    protected $fillable = ['id'];
 
-    public function product() {
+    public function product()
+    {
         return $this->hasMany(Product::class);
     }
-    
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id');
+    }
 }

@@ -46,12 +46,12 @@ Route::group(['middleware' => ['auth', 'verified', 'accepted', 'token']], functi
         Route::get('factory', [FactoryController::class, 'index']);
     });
 
-    Route::group(['middleware' => 'author:warranty_center'], function () {
-        Route::get('warranty_center', [WarrantyCenterController::class, 'index']);
+    Route::group(['middleware' => 'author:warranty'], function () {
+        Route::get('warranty', [WarrantyCenterController::class, 'index']);
     });
 
-    Route::group(['middleware' => 'author:vendor'], function () {
-        Route::get('vendor', [VendorController::class, 'index']);
+    Route::group(['middleware' => 'author:agent'], function () {
+        Route::get('agent', [VendorController::class, 'index']);
     });
 
     Route::post('password/change', [ChangePasswordController::class, 'index'])->name('password.change');
