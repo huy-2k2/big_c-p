@@ -3,15 +3,19 @@
 namespace App\Http\Controllers\Users;
 
 use App\Events\CreateNotifiEvent;
+use App\Exports\ExcelsExport;
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
+use App\Models\Product;
 use App\Models\Range;
 use App\Models\Status;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\DB;
+
 
 class AdminController extends Controller
 {
@@ -85,21 +89,21 @@ class AdminController extends Controller
     public function accept_user_store(Request $request)
     {
         $user = User::find($request->user_accept_id);
-        
+
         if (!$user->account_accepted_at) {
             $user->update(['account_accepted_at' => Carbon::now()]);
-            
-            if($user->role_id == 2 /*factory*/) {
-                DB::table('factories')->insert(['user_id'=>$user->id]);
-            } else if($user->role_id == 3 /*warranty*/) {
-                DB::table('warranties')->insert(['user_id'=>$user->id]);
-            } else if($user->role_id == 4 /*agent*/) {
-                DB::table('agents')->insert(['user_id'=>$user->id]);
-            } else if($user->role_id == 5 /*customer*/) {
-                DB::table('customers')->insert(['user_id'=>$user->id]);
+
+            if ($user->role_id == 2 /*factory*/) {
+                DB::table('factories')->insert(['user_id' => $user->id]);
+            } else if ($user->role_id == 3 /*warranty*/) {
+                DB::table('warranties')->insert(['user_id' => $user->id]);
+            } else if ($user->role_id == 4 /*agent*/) {
+                DB::table('agents')->insert(['user_id' => $user->id]);
+            } else if ($user->role_id == 5 /*customer*/) {
+                DB::table('customers')->insert(['user_id' => $user->id]);
             }
         }
-        
+
         return response()->json(true);
     }
 
@@ -160,19 +164,35 @@ class AdminController extends Controller
             ]
         );
 
-        return response()->json([1, 2, 3]);
+        return response()->json(true);
     }
 
     public function product_statistic()
     {
-        $vendors = User::get_users_with_role('vendor');
-        $warranty_centers = User::get_users_with_role('warranty_center');
+        $vendors = User::get_users_with_role('agent');
+        $warranty_centers = User::get_users_with_role('warranty');
         $factories = User::get_users_with_role('factory');
         return view('admin.product_statistic', ['users' => User::all(), 'statuses' => Status::all(), 'vendors' => $vendors, 'warranty_centers' => $warranty_centers, 'factories' => $factories]);
     }
 
     public function print_product_statistic(Request $request)
     {
-        return $request;
+        $list_products = [];
+        $data_inputs = $request->all();
+        unset($data_inputs['_token']);
+        if (count($data_inputs) == 0)
+            $list_products[] = Product::excel_export(Product::all());
+        else {
+            foreach ($data_inputs as $key => $data_input) {
+                foreach ($data_input as $input_value) {
+                    if ($input_value != 0) {
+                        $list_products[] = Product::excel_export(Product::where("{$key}_id", $input_value)->get());
+                    } else {
+                        $list_products[] = Product::excel_export(Product::where("{$key}_id", '!=', null)->get());
+                    }
+                }
+            }
+        }
+        return (new ExcelsExport($list_products, []))->download('product.xlsx');
     }
 }

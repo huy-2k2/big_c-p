@@ -9,13 +9,20 @@ class Factory extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id'];
+    protected $fillable = ['id'];
 
-    public function batch() {
+    public function batch()
+    {
         return $this->hasMany(Factory::class);
     }
 
-    public function user() {
-        return $this->belongsTo(User::class);
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id');
+    }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
     }
 }
