@@ -27,13 +27,8 @@ class AdminController extends Controller
     public function create_notifi()
     {
         $users = User::all();
-<<<<<<< HEAD
         $agents = User::get_users_with_role('agent');
         $warranties = User::get_users_with_role('warranty');
-=======
-        $vendors = User::get_users_with_role('agent');
-        $warranty_centers = User::get_users_with_role('warranty');
->>>>>>> 2fb5d7c (ba)
         $factories = User::get_users_with_role('factory');
         return view('admin.create_notifi', ['users' => $users, 'agents' => $agents, 'warranties' => $warranties, 'factories' => $factories]);
     }
@@ -94,21 +89,21 @@ class AdminController extends Controller
     public function accept_user_store(Request $request)
     {
         $user = User::find($request->user_accept_id);
-        
+
         if (!$user->account_accepted_at) {
             $user->update(['account_accepted_at' => Carbon::now()]);
-            
-            if($user->role_id == 2 /*factory*/) {
-                DB::table('factories')->insert(['user_id'=>$user->id]);
-            } else if($user->role_id == 3 /*warranty*/) {
-                DB::table('warranties')->insert(['user_id'=>$user->id]);
-            } else if($user->role_id == 4 /*agent*/) {
-                DB::table('agents')->insert(['user_id'=>$user->id]);
-            } else if($user->role_id == 5 /*customer*/) {
-                DB::table('customers')->insert(['user_id'=>$user->id]);
+
+            if ($user->role_id == 2 /*factory*/) {
+                DB::table('factories')->insert(['user_id' => $user->id]);
+            } else if ($user->role_id == 3 /*warranty*/) {
+                DB::table('warranties')->insert(['user_id' => $user->id]);
+            } else if ($user->role_id == 4 /*agent*/) {
+                DB::table('agents')->insert(['user_id' => $user->id]);
+            } else if ($user->role_id == 5 /*customer*/) {
+                DB::table('customers')->insert(['user_id' => $user->id]);
             }
         }
-        
+
         return response()->json(true);
     }
 
@@ -185,30 +180,19 @@ class AdminController extends Controller
         $list_products = [];
         $data_inputs = $request->all();
         unset($data_inputs['_token']);
-<<<<<<< HEAD
-=======
-
->>>>>>> b480e8a002592c956524cb1e8173a433a3290e33
         if (count($data_inputs) == 0)
             $list_products[] = Product::excel_export(Product::all());
         else {
             foreach ($data_inputs as $key => $data_input) {
                 foreach ($data_input as $input_value) {
                     if ($input_value != 0) {
-                        $list_products[] = Product::excel_export(Product::whereHas($key, function (Builder $query) use ($input_value) {
-                            $query->where('id', $input_value);
-                        })->get());
+                        $list_products[] = Product::excel_export(Product::where("{$key}_id", $input_value)->get());
                     } else {
                         $list_products[] = Product::excel_export(Product::where("{$key}_id", '!=', null)->get());
                     }
                 }
             }
         }
-<<<<<<< HEAD
-        return (new ExcelsExport($list_products, ['name1, nam2']))->download('product.xlsx');
-=======
-
         return (new ExcelsExport($list_products, []))->download('product.xlsx');
->>>>>>> b480e8a002592c956524cb1e8173a433a3290e33
     }
 }
