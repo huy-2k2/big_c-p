@@ -13,12 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('ranges', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('property');
-            $table->string('warranty_time');
-            $table->timestamps();
+        Schema::table('products', function (Blueprint $table) {
+            $table->dropColumn('buy_time');
+            $table->timestamp('customer_buy_time')->nullable();
         });
     }
 
@@ -29,6 +26,9 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('ranges');
+        Schema::table('products', function (Blueprint $table) {
+            $table->dropColumn('customer_buy_time');
+            $table->string('buy_time');
+        });
     }
 };

@@ -9,7 +9,7 @@ class Range extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'property', 'warranty_period_time'];
+    protected $fillable = ['name', 'property', 'warranty_time'];
 
     public function batch() {
         return $this->hasMany(Batch::class);

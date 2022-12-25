@@ -131,14 +131,14 @@ class AdminController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'min:8'],
             'property' => ['required', 'string', 'min:36'],
-            'warranty_period_time' => ['required', 'integer', 'min:0']
+            'warranty_time' => ['required', 'integer', 'min:0']
         ]);
 
         Range::create(
             [
                 'name' => $request->name,
                 'property' => $request->property,
-                'warranty_period_time' => $request->warranty_period_time,
+                'warranty_time' => $request->warranty_time,
             ]
         );
         return Redirect::back()->with(['message' => 'tạo dòng sản phẩm thành công']);
@@ -149,14 +149,14 @@ class AdminController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'min:8'],
             'property' => ['required', 'string', 'min:36'],
-            'warranty_period_time' => ['required', 'integer', 'min:0']
+            'warranty_time' => ['required', 'integer', 'min:0']
         ]);
 
         Range::find($request->product_line_id)->update(
             [
                 'name' => $request->name,
                 'property' => $request->property,
-                'warranty_period_time' => $request->warranty_period_time,
+                'warranty_time' => $request->warranty_time,
             ]
         );
 

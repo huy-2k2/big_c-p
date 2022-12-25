@@ -31,7 +31,7 @@ class DepotController extends Controller
         DB::table('depots')->insert([
             'depot_name' => $request->input('depot_name'),
             'size' => $request->input('size'),
-            'status' => 'Còn trống',
+            'status_b' => true,
             'owner_id' => $owner_id
         ]);
     }
