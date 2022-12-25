@@ -6,10 +6,12 @@ use App\Events\CreateNotifiEvent;
 use App\Exports\ExcelsExport;
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
+use App\Models\Product;
 use App\Models\Range;
 use App\Models\Status;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\DB;
@@ -175,13 +177,26 @@ class AdminController extends Controller
 
     public function print_product_statistic(Request $request)
     {
-        $users = User::all();
-        foreach ($users as $user) {
-            $user['province'] = $user->address->province;
-            $user['district'] = $user->address->district;
-            $user['sub_district'] = $user->address->sub_district;
-            $user['role'] = $user->role->name;
+        $list_products = [];
+        $data_inputs = $request->all();
+        unset($data_inputs['_token']);
+
+        if (count($data_inputs) == 0)
+            $list_products[] = Product::excel_export(Product::all());
+        else {
+            foreach ($data_inputs as $key => $data_input) {
+                foreach ($data_input as $input_value) {
+                    if ($input_value != 0) {
+                        $list_products[] = Product::excel_export(Product::whereHas($key, function (Builder $query) use ($input_value) {
+                            $query->where('id', $input_value);
+                        })->get());
+                    } else {
+                        $list_products[] = Product::excel_export(Product::where("{$key}_id", '!=', null)->get());
+                    }
+                }
+            }
         }
-        return (new ExcelsExport([$users, $users, $users], ['name1', 'name2', 'name3']))->download('user.xlsx');
+
+        return (new ExcelsExport($list_products, []))->download('product.xlsx');
     }
 }
