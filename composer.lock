@@ -164,12 +164,18 @@
             },
             "notification-url": "https://packagist.org/downloads/",
 <<<<<<< HEAD
+<<<<<<< HEAD
             "license": ["MIT"],
 =======
             "license": [
                 "MIT"
             ],
 >>>>>>> b480e8a (hoàn thiện database và chức năng xuất file excel)
+=======
+            "license": [
+                "MIT"
+            ],
+>>>>>>> b480e8a002592c956524cb1e8173a433a3290e33
             "authors": [
                 {
                     "name": "Guilherme Blanco",
@@ -264,12 +270,18 @@
                 "symfony/console": "For helpful console commands such as SQL execution and import of files."
             },
 <<<<<<< HEAD
+<<<<<<< HEAD
             "bin": ["bin/doctrine-dbal"],
 =======
             "bin": [
                 "bin/doctrine-dbal"
             ],
 >>>>>>> b480e8a (hoàn thiện database và chức năng xuất file excel)
+=======
+            "bin": [
+                "bin/doctrine-dbal"
+            ],
+>>>>>>> b480e8a002592c956524cb1e8173a433a3290e33
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -278,12 +290,18 @@
             },
             "notification-url": "https://packagist.org/downloads/",
 <<<<<<< HEAD
+<<<<<<< HEAD
             "license": ["MIT"],
 =======
             "license": [
                 "MIT"
             ],
 >>>>>>> b480e8a (hoàn thiện database và chức năng xuất file excel)
+=======
+            "license": [
+                "MIT"
+            ],
+>>>>>>> b480e8a002592c956524cb1e8173a433a3290e33
             "authors": [
                 {
                     "name": "Guilherme Blanco",
@@ -377,12 +395,18 @@
             },
             "notification-url": "https://packagist.org/downloads/",
 <<<<<<< HEAD
+<<<<<<< HEAD
             "license": ["MIT"],
 =======
             "license": [
                 "MIT"
             ],
 >>>>>>> b480e8a (hoàn thiện database và chức năng xuất file excel)
+=======
+            "license": [
+                "MIT"
+            ],
+>>>>>>> b480e8a002592c956524cb1e8173a433a3290e33
             "description": "A small layer on top of trigger_error(E_USER_DEPRECATED) or PSR-3 logging with options to disable all deprecations or selectively for packages.",
             "homepage": "https://www.doctrine-project.org/",
             "support": {
@@ -425,12 +449,18 @@
             },
             "notification-url": "https://packagist.org/downloads/",
 <<<<<<< HEAD
+<<<<<<< HEAD
             "license": ["MIT"],
 =======
             "license": [
                 "MIT"
             ],
 >>>>>>> b480e8a (hoàn thiện database và chức năng xuất file excel)
+=======
+            "license": [
+                "MIT"
+            ],
+>>>>>>> b480e8a002592c956524cb1e8173a433a3290e33
             "authors": [
                 {
                     "name": "Guilherme Blanco",
@@ -3421,12 +3451,18 @@
             },
             "notification-url": "https://packagist.org/downloads/",
 <<<<<<< HEAD
+<<<<<<< HEAD
             "license": ["MIT"],
 =======
             "license": [
                 "MIT"
             ],
 >>>>>>> b480e8a (hoàn thiện database và chức năng xuất file excel)
+=======
+            "license": [
+                "MIT"
+            ],
+>>>>>>> b480e8a002592c956524cb1e8173a433a3290e33
             "authors": [
                 {
                     "name": "PHP-FIG",
@@ -3435,14 +3471,20 @@
             ],
             "description": "Common interface for caching libraries",
 <<<<<<< HEAD
+<<<<<<< HEAD
             "keywords": ["cache", "psr", "psr-6"],
 =======
+=======
+>>>>>>> b480e8a002592c956524cb1e8173a433a3290e33
             "keywords": [
                 "cache",
                 "psr",
                 "psr-6"
             ],
+<<<<<<< HEAD
 >>>>>>> b480e8a (hoàn thiện database và chức năng xuất file excel)
+=======
+>>>>>>> b480e8a002592c956524cb1e8173a433a3290e33
             "support": {
                 "source": "https://github.com/php-fig/cache/tree/3.0.0"
             },

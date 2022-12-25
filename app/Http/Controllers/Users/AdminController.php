@@ -185,6 +185,10 @@ class AdminController extends Controller
         $list_products = [];
         $data_inputs = $request->all();
         unset($data_inputs['_token']);
+<<<<<<< HEAD
+=======
+
+>>>>>>> b480e8a002592c956524cb1e8173a433a3290e33
         if (count($data_inputs) == 0)
             $list_products[] = Product::excel_export(Product::all());
         else {
@@ -200,6 +204,11 @@ class AdminController extends Controller
                 }
             }
         }
+<<<<<<< HEAD
         return (new ExcelsExport($list_products, ['name1, nam2']))->download('product.xlsx');
+=======
+
+        return (new ExcelsExport($list_products, []))->download('product.xlsx');
+>>>>>>> b480e8a002592c956524cb1e8173a433a3290e33
     }
 }

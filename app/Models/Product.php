@@ -13,9 +13,10 @@ class Product extends Model
 
     protected $fillable = ['depot_id', 'batch_id', 'agent_id', 'customer_id', 'factory_id', 'status', 'warranty_id'];
 
-    public static function count_quantity_product($names, $id_values) {
-        $count_result = DB::table('products')->where(function($query) use ($names,$id_values) {
-            for($i = 0; $i < count($names); $i++) {
+    public static function count_quantity_product($names, $id_values)
+    {
+        $count_result = DB::table('products')->where(function ($query) use ($names, $id_values) {
+            for ($i = 0; $i < count($names); $i++) {
                 $query->where($names[$i], '=', $id_values[$i]);
             }
         })->get()->count();
@@ -23,13 +24,14 @@ class Product extends Model
         return $count_result;
     }
 
-    public static function get_product($names, $id_values) {
-        $result = DB::table('products')->where(function($query) use ($names,$id_values) {
-            for($i = 0; $i < count($names); $i++) {
+    public static function get_product($names, $id_values)
+    {
+        $result = DB::table('products')->where(function ($query) use ($names, $id_values) {
+            for ($i = 0; $i < count($names); $i++) {
                 $query->where($names[$i], '=', $id_values[$i]);
             }
         })->get();
-        
+
         return $result;
     }
 
