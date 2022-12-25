@@ -1,4 +1,4 @@
-@extends('layouts.factory')
+@extends('layouts.agent')
 @section('content')
 <div id="search_block" class="panel-body">
   <form>
@@ -47,9 +47,9 @@
           <td value={{ $line->id }}>{{ $line -> name }}</td>
           <td value={{ $depot->id }}>{{ $depot -> depot_name }}</td>
           <td>{{ 
-            App\Models\Product::count_quantity_product(['range_id', 'depot_id', 'status_id'], [$line->id, $depot->id, 1]);
+            App\Models\Product::count_quantity_product(['range_id', 'depot_id', 'status_id'], [$line->id, $depot->id, 2]);
           }}</td>
-          <td>{{ 
+          <td value={{ $depot->id }}>{{ 
             App\Models\Product::count_quantity_product(['depot_id'], [$depot->id]);
           }} / {{ $depot -> size }}</td>
         </tr>

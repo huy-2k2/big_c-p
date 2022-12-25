@@ -74,7 +74,11 @@ Route::group(['middleware' => ['auth', 'verified', 'accepted', 'token']], functi
     });
 
     Route::name('agent.')->prefix('agent')->middleware(['author:agent'])->group(function () {
-        Route::get('agent', [AgentController::class, 'index']);
+        Route::get('/', [AgentController::class, 'index']);
+        Route::get('/depot_product', [AgentController::class, 'depot_product'])->name('depot_product');
+        Route::get('/waiting_products', [AgentController::class, 'waiting_products'])->name('waiting_products');
+        Route::get('/transfer_to_depot', [AgentController::class, 'transfer_to_depot'])->name('transfer_to_depot');
+        
     });
 
     Route::post('password/change', [ChangePasswordController::class, 'index'])->name('password.change');

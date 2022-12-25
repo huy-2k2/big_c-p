@@ -61,7 +61,7 @@ class AdminController extends Controller
                     foreach ($users as $user) {
                         $notification->users()->attach($user->id);
                         broadcast(new CreateNotifiEvent(['user_id' => $user->id, 'notification' => $notification, 'time' => $notification->created_at->toDateTimeString()]));
-                    }
+                    }   
                 } else {
                     $notification->users()->attach($id);
                     broadcast(new CreateNotifiEvent(['user_id' => $id, 'notification' => $notification, 'time' => $notification->created_at->toDateTimeString()]));

@@ -15,19 +15,4 @@ class Agent extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
-
-    public function agent_customer_product()
-    {
-        return $this->hasMany(AgentCustomerProduct::class);
-    }
-
-    public function agent_product_warranter()
-    {
-        return $this->hasMany(Models\AgentProductWarranter::class);
-    }
-
-    public function depot()
-    {
-        return $this->morphMany(Models\Depot::class, 'depotable');
-    }
 }
