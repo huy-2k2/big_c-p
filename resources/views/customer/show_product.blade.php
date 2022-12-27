@@ -9,6 +9,7 @@
         <th scope="col">Mua tại</th>
         <th scope="col">Số lần bảo hành</th>
         <th scope="col">Thời gian mua</th>
+        <th scope="col">Hạn bảo hành</th>
         <th scope="col">Trạng thái</th>
         <th scope="col">Chức năng</th>
       </tr>
@@ -22,13 +23,19 @@
             <td>{{ (DB::table('users')->where('id', $product->agent_id)->first())->name }}</td>
             <td>{{ $product->warranty_count }}</td>
             <td>{{ $product->customer_buy_time }}</td>
-            <td>Đang ở {{ (DB::table('statuses')->where('id', $product->status_id)->first())->name }}</td>
+            <td>{{ $product->end_date }}</td>
             <td>
-              @if($product->status_id == 3) {
+              @if($product->out_of_warranty == 1) 
+                Hết hạn bảo hành
+               @else
+                Đang ở {{ (DB::table('statuses')->where('id', $product->status_id)->first())->name }}
+              @endif
+            </td>
+            <td>
+              @if($product->status_id == 3 && $product->out_of_warranty == 0) 
                 <button class="btn btn-danger">
                   <a href = '{{ route('customer.warranty_claim', ['id' => $product->id]) }}'>Yêu cầu bảo hành</a>
                 </button>
-              }
               @endif
             </td>
         </tr>

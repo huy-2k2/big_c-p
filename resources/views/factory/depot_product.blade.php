@@ -3,9 +3,9 @@
 <div id="search_block" class="panel-body">
   <form>
       <div class="form-group row">
-          <label class="col-xs-10 col-sm-2 col-md-1 control-label" for="myInput`">Search:</label>
+          <label class="col-xs-10 col-sm-2 col-md-1 control-label" for="myInput">Search:</label>
           <div class="col-xs-10 col-sm-8 col-md-4">
-              <input type="text" placeholder="Enter Search Keywords" value="" name="myInput`" id="myInput" class="form-control">
+              <input type="text" placeholder="Enter Search Keywords" value="" name="myInput" id="myInput" class="form-control">
           </div>
       </div>
       <div class="form-group row">
@@ -47,7 +47,7 @@
           <td value={{ $line->id }}>{{ $line -> name }}</td>
           <td value={{ $depot->id }}>{{ $depot -> depot_name }}</td>
           <td>{{ 
-            App\Models\Product::count_quantity_product(['range_id', 'depot_id', 'status_id'], [$line->id, $depot->id, 1]);
+            App\Models\Product::count_quantity_product(['range_id', 'depot_id', 'status_id', 'is_recall'], [$line->id, $depot->id, 1, 0]);
           }}</td>
           <td>{{ 
             App\Models\Product::count_quantity_product(['depot_id'], [$depot->id]);

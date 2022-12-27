@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Depot;
 use App\Models\Product;
+use Carbon\Carbon;
 use App\Models\Customer;
 use App\Models\Warranty;
 
@@ -162,17 +163,21 @@ class AgentController extends Controller
             return redirect()->back()->with(['message'=>'Sản phẩm không có trong kho']);
         }
 
+        if($product->is_recall == 1) {
+            return redirect()->back()->with(['message'=>'Sản phẩm đang được thu hồi']);
+        }
+
         return view('agent.check_sell_to_customer', compact('customer', 'product', 'address_customer', 'range_name'));
     }
 
     public function confirm_sell_to_customer(Request $request) {
         $message = Product::transfer_product(Auth::user()->id, $request->input('user_id_to'), $request->input('product_id'), 3);
-        return redirect() -> route('home') -> with(['message' => $message]);
+        return redirect() -> route('agent.sell_to_customer') -> with(['message' => $message]);
     }
 
     public function show_product_warranty() {
-        $products_to_warranty = Product::get_product(['agent_id', 'status_id'], [Auth::user()->id, 4]);
-        $products_to_customer = Product::get_product(['agent_id', 'status_id'], [Auth::user()->id, 7]);
+        $products_to_warranty = Product::get_product(['agent_id', 'status_id', 'is_recall'], [Auth::user()->id, 4, 0]);
+        $products_to_customer = Product::get_product(['agent_id', 'status_id', 'is_recall'], [Auth::user()->id, 7, 0]);
         $warranties = DB::table('users')->where('role_id', 3)->get();
 
         return view('agent.show_product_warranty', compact('products_to_warranty', 'products_to_customer', 'warranties'));
@@ -202,15 +207,38 @@ class AgentController extends Controller
         $warranty = DB::table('users')->where('id', $request->input('warranty_id'))->first();
         $product = DB::table('products')->where('id', $request->input('product_id'))->first();
 
-        if($product->status_id != 4 || $product->agent_id != Auth::user()->id) {
+        if($product->status_id != 4 || $product->agent_id != Auth::user()->id || $product->is_recall == 1) {
             return redirect()->back()->with(['message'=>'Không thấy sản phẩm, vui lòng liên hệ với quản trị viên !!!']);
         }
 
-        $message = Product::transfer_product(Auth::user()->id, $product->warranty_id, $product->id, 5);
-        return redirect() -> route('home') -> with(['message' => $message]);
+        $message = Product::transfer_product(Auth::user()->id, $request->input('warranty_id'), $product->id, 5);
+        return redirect() -> back() -> with(['message' => $message]);
     }
 
     public function transfer_error_prod_return_to_customer(Request $request) {
+        $request->validate(
+            [
+                'product_id'=>'required|gt:0',
+            ],
+            [
+                'product_id.required'=>'Vui lòng nhập trường này',
+                'product_id.gt'=>'Vui lòng nhập đúng định dạng',
+            ]
+        );
 
+        $check_product = Product::check_product_exist($request->input('product_id'));
+
+        if(!$check_product) {
+            return redirect()->back()->with(['message'=>'Sản phẩm không tồn tại. Vui lòng kiểm tra lại !!!']);
+        } 
+
+        $product = DB::table('products')->where('id', $request->input('product_id'))->first();
+
+        if($product->status_id != 7 || $product->agent_id != Auth::user()->id || $product->is_recall == 1) {
+            return redirect()->back()->with(['message'=>'Không thấy sản phẩm, vui lòng liên hệ với quản trị viên !!!']);
+        }
+
+        $message = Product::transfer_product(Auth::user()->id, $product->customer_id, $product->id, 3, ['return_prod' => 'Trả lại sản phẩm cho người dùng']);
+        return redirect() -> back() -> with(['message' => $message]);
     }
 }

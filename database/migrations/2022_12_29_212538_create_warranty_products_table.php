@@ -17,8 +17,12 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('product_id');
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+            $table->unsignedBigInteger('batch_id');
+            $table->foreign('batch_id')->references('id')->on('batches')->onDelete('cascade');
             $table->boolean('status'); //true -> sửa xong
             $table->text('reason');
+            $table->unsignedBigInteger('product_error_id');
+            $table->foreign('product_error_id')->references('id')->on('product_errors')->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -9,6 +9,7 @@ use App\Models\Notification;
 use App\Models\Product;
 use App\Models\Range;
 use App\Models\Status;
+use App\Models\Warranty;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -197,4 +198,59 @@ class AdminController extends Controller
         'Factory', 'Agent']))->download('product_admin.xlsx');
         
     }
+
+
+    public function show_batches_recall() {
+
+        $users = User::all();
+        $batches_id = DB::table('products')->select('batch_id')
+                        ->where('is_recall', 1) 
+                        ->groupBy('batch_id')
+                        ->get();
+        $batches = [];
+        foreach($batches_id as $id) {
+            $batches[] = DB::table('batches')->where('id', $id->batch_id)->first();
+        }
+
+        return view('admin.show_batches_recall', ['users' => $users, 'batches' => $batches]);
+    }
+
+    public function new_batch_recall(Request $request) {
+        $users = User::all();
+        return view('admin.new_batch_recall', ['users' => $users]);
+    }
+
+    public function post_new_batch_recall(Request $request) {
+        $request->validate(
+            [
+                'batch_id'=>'required|gt:0',
+            ],
+            [
+                'batch_id.required'=>'Vui lòng nhập trường này',
+                'batch_id.gt'=>'Vui lòng nhập đúng định dạng'
+            ]
+        );
+
+        $check_batch_exist = DB::table('batches')->where('id', $request->input('batch_id'))->first();
+        if(!$check_batch_exist) {
+            return redirect()->back()->with(['message'=> 'Không tồn tại lô hàng này']);
+        }
+
+        $check_is_recall = (DB::table('products')->where('batch_id', $request->input('batch_id'))->first())->is_recall;
+        
+        if($check_is_recall) {
+            return redirect()->back()->with(['message'=> 'Lô hàng đã được thu hồi']);
+        }
+
+        $message = Warranty::product_recall($request->input('batch_id'));
+
+        return redirect()->back()->with(['message'=> $message]);
+    }
+
+    public function return_batch_recall($id) {
+        $message = Warranty::return_product_recall($id);
+
+        return redirect()->back()->with(['message'=> $message]);
+    }
+
 }

@@ -124,9 +124,9 @@ class FactoryController extends Controller
             ]
         );
         
-        $count_prod_in_depot = Product::count_quantity_product(['range_id', 'factory_id', 'status_id'], [$request->input('range'), Auth::user() -> id, 1]);
+        $count_prod_in_depot = Product::count_quantity_product(['range_id', 'factory_id', 'status_id', 'is_recall'], [$request->input('range'), Auth::user() -> id, 1, 0]);
         if($count_prod_in_depot >= $request->input('quantity_prod')) {
-            $all_prod_in_depot = Product::get_product(['range_id', 'factory_id', 'status_id'], [$request->input('range'), Auth::user() -> id, 1]);
+            $all_prod_in_depot = Product::get_product(['range_id', 'factory_id', 'status_id', 'is_recall'], [$request->input('range'), Auth::user() -> id, 1, 0]);
             $i = 0;
             $transfer_batch = ($all_prod_in_depot->first())->id;
 
@@ -136,6 +136,7 @@ class FactoryController extends Controller
             $factory_function::create_notifi_to_agent('Nhận được sản phẩm từ nhà máy', $content, $request->input('agent')); //cần sửa
             
             foreach($all_prod_in_depot as $prod) {
+                
                 if ($i == $request->input('quantity_prod')) { 
                     return redirect()->route('factory.transfer_prod_to_agent')->with(['message' => 'xuất thành công']);
                 }

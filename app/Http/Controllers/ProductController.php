@@ -9,7 +9,5 @@ use App\Http\Requests\UpdateProductRequest;
 
 class ProductController extends Controller
 {
-    public static function get_all_products($owner_id) {
-        return DB::table('products')->where('owner_id', '=', $owner_id)->get();
-    }
+    
 }

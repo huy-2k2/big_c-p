@@ -34,13 +34,18 @@ Route::group(['middleware' => ['auth', 'verified', 'accepted', 'token']], functi
         Route::post('/store_notifi', [AdminController::class, 'store_notifi'])->name('store_notifi');
         Route::get('/notifi', [AdminController::class, 'notifi'])->name('notifi');
         Route::get('/accept_user', [AdminController::class, 'accept_user'])->name('accept_user');
+        
+        Route::get('/product_line', [AdminController::class, 'product_line'])->name('product_line');
+        Route::get('/create_product_line', [AdminController::class, 'create_product_line'])->name('create_product_line');
+        Route::post('/store_product_line', [AdminController::class, 'store_product_line'])->name('store_product_line');
 
-        Route::get('product_line', [AdminController::class, 'product_line'])->name('product_line');
-        Route::get('create_product_line', [AdminController::class, 'create_product_line'])->name('create_product_line');
-        Route::post('store_product_line', [AdminController::class, 'store_product_line'])->name('store_product_line');
+        Route::get('/statistic', [AdminController::class, 'product_statistic'])->name('product_statistic');
+        Route::post('/print_statistic', [AdminController::class, 'print_product_statistic'])->name('print_statistic');
 
-        Route::get('statistic', [AdminController::class, 'product_statistic'])->name('product_statistic');
-        Route::post('print_statistic', [AdminController::class, 'print_product_statistic'])->name('print_statistic');
+        Route::get('/show_batches_recall', [AdminController::class, 'show_batches_recall'])->name('show_batches_recall');
+        Route::get('/new_batch_recall', [AdminController::class, 'new_batch_recall'])->name('new_batch_recall');
+        Route::get('/post_new_batch_recall', [AdminController::class, 'post_new_batch_recall'])->name('post_new_batch_recall');
+        Route::get('/return_batch_recall/{id}', [AdminController::class, 'return_batch_recall'])->name('return_batch_recall');
     });
 
     Route::name('factory.')->prefix('factory')->middleware(['author:factory'])->group(function () {
@@ -72,6 +77,10 @@ Route::group(['middleware' => ['auth', 'verified', 'accepted', 'token']], functi
 
     Route::name('warranty.')->prefix('warranty')->middleware(['author:warranty'])->group(function () {
         Route::get('/', [WarrantyController::class, 'index']);
+        Route::get('/show_product', [WarrantyController::class, 'show_product'])->name('show_product');
+        Route::get('/return_prod_to_agent/{id}', [WarrantyController::class, 'return_prod_to_agent'])->name('return_prod_to_agent');
+        Route::get('/return_prod_to_factory/{id}', [WarrantyController::class, 'return_prod_to_factory'])->name('return_prod_to_factory');
+
     });
 
     Route::name('customer.')->prefix('customer')->middleware(['author:customer'])->group(function () {

@@ -3,9 +3,9 @@
 <div id="search_block" class="panel-body">
     <form>
         <div class="form-group row">
-            <label class="col-xs-10 col-sm-2 col-md-1 control-label" for="myInput`">Search:</label>
+            <label class="col-xs-10 col-sm-2 col-md-1 control-label" for="myInput">Search:</label>
             <div class="col-xs-10 col-sm-8 col-md-4">
-                <input type="text" placeholder="Enter Search Keywords" value="" name="myInput`" id="myInput" class="form-control">
+                <input type="text" placeholder="Enter Search Keywords" value="" name="myInput" id="myInput" class="form-control">
             </div>
         </div>
     </form>

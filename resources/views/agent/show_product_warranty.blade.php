@@ -3,18 +3,18 @@
 <div id="search_block" class="panel-body">
   <form>
       <div class="form-group row">
-          <label class="col-xs-10 col-sm-2 col-md-1 control-label" for="myInput`">Search:</label>
+          <label class="col-xs-10 col-sm-2 col-md-1 control-label" for="myInput">Search:</label>
           <div class="col-xs-10 col-sm-8 col-md-4">
-              <input type="text" placeholder="Enter Search Keywords" value="" name="myInput`" id="myInput" class="form-control">
+              <input type="text" placeholder="Enter Search Keywords" value="" name="myInput" id="myInput" class="form-control">
           </div>
       </div>
       <div class="form-group row">
           <label class="col-xs-10 col-sm-2 col-md-1 control-label">Lọc theo:</label>
           <div class="col-xs-10 col-xs-offset-0 col-sm-8 col-sm-offset-2 col-md-2 col-md-offset-0">
             <select class="form-control" name="status_product" id="status_product">
-                <option value="all">Tất cả trạng thái bảo hành</option>
-                <option value="4">Đang chờ bảo hành</option>
-                <option value="7">Bảo hành xong</option>
+                <option value="all">Tất cả trạng thái</option>
+                <option value="0">Đang chờ bảo hành</option>
+                <option value="1">Bảo hành xong</option>
             </select>
           </div>
       </div>
@@ -36,7 +36,7 @@
           @csrf
         <td><input style="display:none" name="product_id" value={{ $product->id }}>{{ $product -> id }}</td>
         <td>{{ (DB::table('users')->where('id', $product->customer_id)->first())->name }}</td>
-        <td value="4">Đang chờ bảo hành</td>
+        <td value="0">Đang chờ bảo hành</td>
         <td><select class="form-control" name="warranty_id" id="warranty_id">
           @foreach($warranties as $warranty) {
             <option value={{ $warranty -> id }}>{{ $warranty -> name }}</option>
@@ -54,8 +54,8 @@
           @csrf
         <td><input style="display:none" name="product_id" value={{ $product->id }}>{{ $product -> id }}</td>
         <td>{{ (DB::table('users')->where('id', $product->customer_id)->first())->name }}</td>
-        <td value="7">Bảo hành xong</td>
-        <td>{{ $product -> warranty_id }}</td>
+        <td value="1">Bảo hành xong</td>
+        <td>{{ (DB::table('users')->where('id', $product->warranty_id)->first())->name }}</td>
         <td><button class="btn btn-success" type="submit">Trả người dùng</button></td>
         </form>
       </tr>
@@ -77,14 +77,14 @@
   $(document).ready(function(){
     $("#status_product").on("change", function() {
       var value_status_product = $(this).val();
-
-      if(value_status_product == 'all') {
+      
+      if (value_status_product == 'all') {
         $("#myTable tr").filter(function() {
           $(this).show();
         });
       } else {
           $("#myTable tr").filter(function() {
-            $(this).toggle($(this).find("td:nth-child(3)").attr('value').indexOf(value_status_product) > -1);
+            $(this).toggle($(this).find("td:nth-child(3)").attr('value').indexOf(value_range) > -1);
           });
       }
     });
