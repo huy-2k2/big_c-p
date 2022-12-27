@@ -31,6 +31,12 @@ class StatusSeeder extends Seeder
             'name' => 'warranty',
         ]);
         DB::table('statuses')->insert([
+            'name' => 'agent_batch_fail_all',
+        ]);
+        DB::table('statuses')->insert([
+            'name' => 'agent_return',
+        ]);
+        DB::table('statuses')->insert([
             'name' => 'factory_fail',
         ]);
     }

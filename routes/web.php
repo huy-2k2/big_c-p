@@ -5,6 +5,7 @@ use App\Http\Controllers\Users\AdminController;
 use App\Http\Controllers\Users\FactoryController;
 use App\Http\Controllers\Users\AgentController;
 use App\Http\Controllers\Users\WarrantyController;
+use App\Http\Controllers\Users\CustomerController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -73,12 +74,26 @@ Route::group(['middleware' => ['auth', 'verified', 'accepted', 'token']], functi
         Route::get('/', [WarrantyController::class, 'index']);
     });
 
+    Route::name('customer.')->prefix('customer')->middleware(['author:customer'])->group(function () {
+        Route::get('/', [CustomerController::class, 'index']);
+        Route::get('/show_product', [CustomerController::class, 'show_product'])->name('show_product');
+        Route::get('/warranty_claim/{id}', [CustomerController::class, 'warranty_claim'])->name('warranty_claim');
+        Route::post('/send_warranty_claim', [CustomerController::class, 'send_warranty_claim'])->name('send_warranty_claim');
+    });
+
     Route::name('agent.')->prefix('agent')->middleware(['author:agent'])->group(function () {
         Route::get('/', [AgentController::class, 'index']);
         Route::get('/depot_product', [AgentController::class, 'depot_product'])->name('depot_product');
         Route::get('/waiting_products', [AgentController::class, 'waiting_products'])->name('waiting_products');
         Route::get('/transfer_to_depot', [AgentController::class, 'transfer_to_depot'])->name('transfer_to_depot');
+
+        Route::get('/sell_to_customer', [AgentController::class, 'sell_to_customer'])->name('sell_to_customer');
+        Route::get('/check_sell_to_customer', [AgentController::class, 'check_sell_to_customer'])->name('check_sell_to_customer');
+        Route::post('/confirm_sell_to_customer', [AgentController::class, 'confirm_sell_to_customer'])->name('confirm_sell_to_customer');
         
+        Route::get('/show_product_warranty', [AgentController::class, 'show_product_warranty'])->name('show_product_warranty');
+        Route::post('/transfer_error_prod_to_warranty', [AgentController::class, 'transfer_error_prod_to_warranty'])->name('transfer_error_prod_to_warranty');
+        Route::post('/transfer_error_prod_return_to_customer', [AgentController::class, 'transfer_error_prod_return_to_customer'])->name('transfer_error_prod_return_to_customer');
     });
 
     Route::post('password/change', [ChangePasswordController::class, 'index'])->name('password.change');

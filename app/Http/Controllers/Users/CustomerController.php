@@ -1,86 +1,67 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Users;
 
-use App\Models\Customer;
+use App\Http\Controllers\Controller;
+use App\Models\Customers;
 use App\Http\Requests\StoreCustomerRequest;
+use Illuminate\Support\Facades\DB;
+use App\Models\Product;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use App\Http\Requests\UpdateCustomerRequest;
 
 class CustomerController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
+  public function __construct()
+  {
+      $this->middleware(['author:customer']);
+  }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+  public function index()
+  {
+      return view('customer.main');
+  }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StoreCustomerRequest  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(StoreCustomerRequest $request)
-    {
-        //
-    }
+  public function show_product() {
+    $products = Product::get_product(['customer_id'], [Auth::user()->id]);
+   
+    return view('customer.show_product', compact('products'));
+  }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Customer  $customer
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Customer $customer)
-    {
-        //
-    }
+  public function warranty_claim($id) {
+    $product = Product::find($id);
+    return view('customer.warranty_claim', compact('product'));
+  }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Customer  $customer
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Customer $customer)
-    {
-        //
-    }
+  public function send_warranty_claim(Request $request) {
+    $request->validate(
+      [
+          'claim_reason'=>'required|string',
+          'product_id'=>'required|gt:0',
+      ],
+      [
+          'product_id.required'=>'Vui lòng nhập trường này',
+          'claim_reason.required'=>'Vui lòng nhập trường này',
+          'product_id.gt'=>'Vui lòng nhập đúng định dạng',
+          'claim_reason.string'=>'Vui lòng nhập đúng định dạng',
+      ]
+      );
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdateCustomerRequest  $request
-     * @param  \App\Models\Customer  $customer
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UpdateCustomerRequest $request, Customer $customer)
-    {
-        //
-    }
+      $check_product = Product::check_product_exist($request->input('product_id'));
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Customer  $customer
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Customer $customer)
-    {
-        //
-    }
+      if(!$check_product) {
+        return redirect()->back()->with(['message'=>'Sản phẩm không tồn tại. Vui lòng kiểm tra lại !!!']);
+      }
+
+      $product = DB::table('products')->where('id', $request->input('product_id'))->first();
+
+      if($product->status_id != 3 || $product->customer_id != Auth::user()->id) {
+          return redirect()->back()->with(['message'=>'Hiện tại đang không sở hữu sản phẩm này']);
+      }
+
+      $message = Product::transfer_product(Auth::user()->id, $product->agent_id, $product->id, 4, ['reason' => $request->input('claim_reason')]);
+      return redirect() -> route('home') -> with(['message' => $message]);
+  }
 }

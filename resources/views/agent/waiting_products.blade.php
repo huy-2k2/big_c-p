@@ -22,7 +22,7 @@
     </thead>
     <tbody id='myTable'>
         @foreach ($arr_transfer_batch as $one_transfer_batch)
-            <form method="get" action={{ route('agent.transfer_to_depot') }}>
+            <form method="GET" action={{ route('agent.transfer_to_depot') }}>
             <tr>
                 <td><input style="display:none" name="transfer_batch" value={{ $one_transfer_batch['transfer_batch'] }}>{{ $one_transfer_batch['transfer_batch'] }}</td>
                 
