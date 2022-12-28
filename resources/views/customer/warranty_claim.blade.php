@@ -9,7 +9,7 @@
     <li>Nhà máy sản xuất: {{ (DB::table('users')->where('id', $product->factory_id)->first())->name }}</li>
     <li>Mua từ đại lý: {{ (DB::table('users')->where('id', $product->agent_id)->first())->name }}</li>
     <li>Số lần bảo hành: {{ $product->warranty_count }}</li>
-    <li>Thời gian mua hàng: {{ $product->customer_buy_time }}</li>
+    <li>Thời gian mua hàng: {{ $product->customer_buy_time->format('Y-m-d H:i:s') }}</li>
     <li>Trạng thái: Đang ở {{ (DB::table('statuses')->where('id', $product->status_id)->first())->name }}</li>
     <li><label for="error_id">Lý do bảo hành: </label></li>
     <li>
