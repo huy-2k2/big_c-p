@@ -14,4 +14,5 @@ class Range extends Model
     public function batch() {
         return $this->hasMany(Batch::class);
     }
+
 }

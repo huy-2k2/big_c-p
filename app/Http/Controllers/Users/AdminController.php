@@ -186,13 +186,15 @@ class AdminController extends Controller
             foreach ($data_inputs as $key => $data_input) {
                 foreach ($data_input as $input_value) {
                     if ($input_value != 0) {
-                        $list_products[] = Product::excel_export(Product::where("{$key}_id", $input_value)->get());
+                        $list_products[] = Product::excel_export(Product::where("{$key}_id", $input_value)->get(), 'created_at');
                     } else {
-                        $list_products[] = Product::excel_export(Product::where("{$key}_id", '!=', null)->get());
+                        $list_products[] = Product::excel_export(Product::where("{$key}_id", '!=', null)->get(), 'created_at');
                     }
                 }
             }
         }
-        return (new ExcelsExport($list_products, []))->download('product.xlsx');
+        return (new ExcelsExport($list_products, ['Id', 'Status', 'Name', 'Property', 
+        'Factory', 'Agent']))->download('product_admin.xlsx');
+        
     }
 }

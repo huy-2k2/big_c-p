@@ -9,9 +9,9 @@
         @endif
         @foreach ($options as $option)
         <li class="flex items-center justify-between px-3 py-1 cursor-pointer hover:bg-blue-400 hover:text-white">
-            <span data-id='{{ $option->id }}' class="flex-grow select-{{ $name }}-choose select-choose">{{ $option->name }}</span>
+            <span data-id='{{ $option['id'] }}' class="flex-grow select-{{ $name }}-choose select-choose">{{ $option['name'] }}</span>
             @isset($detail_option)
-                <span data-id='{{ $option->id }}' class="text-sm font-medium {{ $detail_option['class'] }}">{{ $detail_option['title']}}</span>
+                <span data-id='{{ $option['id'] }}' class="text-sm font-medium {{ $detail_option['class'] }}">{{ $detail_option['title']}}</span>
             @endisset
         </li>
         @endforeach

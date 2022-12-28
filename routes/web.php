@@ -58,6 +58,15 @@ Route::group(['middleware' => ['auth', 'verified', 'accepted', 'token']], functi
         Route::post('/transfer_prod_to_agent', [FactoryController::class, 'post_transfer_prod_to_agent'])->name('post_transfer_prod_to_agent');
 
         Route::get('/depot_product', [FactoryController::class, 'depot_product'])->name('depot_product');
+
+        Route::get('statistic', [FactoryController::class, 'product_statistic'])->name('product_statistic');
+        Route::post('print_statistic', [FactoryController::class, 'print_product_statistic'])->name('print_statistic');
+
+        Route::get('sales_statistic', [FactoryController::class, 'product_sales_statistic'])
+        ->name('product_sales_statistic');
+        Route::post('print_sales_statistic', [FactoryController::class, 'print_product_sales_statistic'])
+        ->name('print_product_sales_statistic');
+
     });
 
     Route::name('warranty.')->prefix('warranty')->middleware(['author:warranty'])->group(function () {
