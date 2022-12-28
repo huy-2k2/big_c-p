@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Models\Product;
+use App\Models\Depot;
 
 class BatchController extends Controller
 {
@@ -32,22 +33,16 @@ class BatchController extends Controller
         $range = DB::table('ranges')->where('id', '=', $request->input('range'))->get()->first();
         
         if($range) {
-            $current_depots = DB::table('depots')->where('owner_id', '=', $owner_id)->get();
-            $is_true_depot = false;
-            foreach($current_depots as $depot) {
-                if($depot->id == $request->input('depot')) {
-                    $is_true_depot = true;
-                    break;
-                }
-            }
+            
+            $is_true_depot = Depot::depot_check_have($owner_id, $request->input('depot'));
 
             if($is_true_depot) {
-                $count_quantity_depot = Product::count_quantity_product(['depot_id'], [$request->input('depot')]);
-                $size_depot = (DB::table('depots')->where('id', '=', $request->input('depot'))->first())->size;
-                if($request->input('quantity') + $count_quantity_depot > $size_depot) {
+                $still_empty = Depot::depot_check_still_empty($request->input('depot'), $request->input('quantity'));
+                
+                if(!$still_empty) {
                     return false;
                 }
-                
+
                 $current_batch_id = DB::table('batches')->insertGetId([
                     'quantity' => $request->input('quantity'),
                     'range_id' => $request->input('range'),
@@ -68,13 +63,13 @@ class BatchController extends Controller
                         'customer_id' => null,
                         'status_id' => 1,
                         'owner_id' => $owner_id,
-                        'range_id' => $request->input('range')
+                        'range_id' => $request->input('range'),
+                        'created_at' => Carbon::now(),
                     ]);
                 }
 
                 return true;
             } else {
-                dd(2);
                 return false;
             }
         } else {

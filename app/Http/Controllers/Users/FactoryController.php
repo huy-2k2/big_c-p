@@ -14,6 +14,8 @@ use App\Models\Status;
 use App\Models\User;
 use Carbon\Carbon;
 use App\Exports\ExcelsExport;
+use App\Events\CreateNotifiEvent;
+use App\Models\Notification;
 
 class FactoryController extends Controller
 {
@@ -37,9 +39,9 @@ class FactoryController extends Controller
     public function create_batch_post(Request $request) {
         $temp = BatchController::create_batch($request, Auth::user()->id);
         if(!$temp) {
-            return redirect()->route('factory.depot_product', ['result' => false]);
+            return redirect()->route('factory.depot_product') ->with(['message' => 'Kho không đủ chỗ trống, vui lòng kiểm tra lại']);
         } else {
-            return redirect()->route('factory.depot_product', ['result' => true]);
+            return redirect()->route('factory.depot_product') ->with(['message' => 'Tạo lô thành công']);
         }
     }
 
@@ -57,12 +59,12 @@ class FactoryController extends Controller
     public function post_add_factory_depot(Request $request) {
         DepotController::add_depot($request, Auth::user()->id);
 
-        return redirect()->route('factory.factory_depots');
+        return redirect()->route('factory.factory_depots')->with(['message' => 'Tạo kho thành công']);
     }
 
     public function delete_factory_depot($id) {
-        DepotController::delete_depot($id);
-        return redirect()->route('factory.factory_depots');
+        DepotController::delete_depot($id); 
+        return redirect()->route('factory.factory_depots')->with(['message' => 'Xóa kho thành công']);
     }
 
     public function edit_factory_depot($id) {
@@ -70,14 +72,14 @@ class FactoryController extends Controller
         if($depot_edit) {
             return view('factory.edit_factory_depot', compact('depot_edit'));
         } else {
-            return redirect()->route('factory.factory_depots');
+            return redirect()->route('factory.factory_depots')->with(['message' => 'Không tồn tại']);
         }
     }
 
     public function put_edit_factory_depot($id, Request $request) {
         DepotController::edit_depot($id, $request); 
 
-        return redirect()->route('factory.factory_depots');
+        return redirect()->route('factory.factory_depots')->with(['message' => 'Chỉnh sửa thành công']);
     }
 
     public function depot_product() {
@@ -85,6 +87,18 @@ class FactoryController extends Controller
         $depots = DB::table('depots')->where('owner_id', '=', Auth::user()->id)->get();
         
         return view('factory.depot_product', compact('lines', 'depots'));
+    }
+
+    public static function create_notifi_to_agent($title, $content, $agent_id) {
+        $notification = Notification::create([
+            'title' => $title,
+            'content' => $content
+        ]);
+
+        $notification->users()->attach($agent_id);
+        broadcast(new CreateNotifiEvent(['user_id' => $agent_id, 'notification' => $notification, 'time' => $notification->created_at->toDateTimeString()]));
+        
+        return redirect()->back()->with(['message' => 'tạo thông báo thành công']);
     }
 
     public function transfer_prod_to_agent() {
@@ -109,29 +123,45 @@ class FactoryController extends Controller
                 'agent.gte'=>'Vui lòng nhập đúng',
             ]
         );
-
-        $count_prod_in_depot = Product::count_quantity_product(['range_id', 'factory_id', 'status_id'], [$request->input('range'), Auth::user() -> id, 1]);
+        
+        $count_prod_in_depot = Product::count_quantity_product(['range_id', 'factory_id', 'status_id', 'is_recall'], [$request->input('range'), Auth::user() -> id, 1, 0]);
         if($count_prod_in_depot >= $request->input('quantity_prod')) {
-            $all_prod_in_depot = Product::get_product(['range_id', 'factory_id', 'status_id'], [$request->input('range'), Auth::user() -> id, 1]);
+            $all_prod_in_depot = Product::get_product(['range_id', 'factory_id', 'status_id', 'is_recall'], [$request->input('range'), Auth::user() -> id, 1, 0]);
             $i = 0;
+            $transfer_batch = ($all_prod_in_depot->first())->id;
+
+            $range_name = (DB::table('ranges')->where('id', '=', $request->input('range'))->first())->name;
+            $content = 'Nhà máy ' . Auth::user()->name . ' đã xuất ' . $request->input('quantity_prod') . ' sản phẩm dòng ' . $range_name . ' cho bạn';
+            $factory_function = new FactoryController();
+            $factory_function::create_notifi_to_agent('Nhận được sản phẩm từ nhà máy', $content, $request->input('agent')); //cần sửa
+            
             foreach($all_prod_in_depot as $prod) {
+                
                 if ($i == $request->input('quantity_prod')) { 
-                    return redirect() -> route('factory.transfer_prod_to_agent', ['result' => true]);
+                    return redirect()->route('factory.transfer_prod_to_agent')->with(['message' => 'xuất thành công']);
                 }
 
                 $i++;
-
+                
+                DB::table('waiting_products') -> insert([
+                    'product_id' => $prod->id,
+                    'agent_id' => $request->input('agent'),
+                    'range_id' => $request->input('range'),
+                    'transfer_batch' => $transfer_batch,
+                    'status' => 0, 
+                    'created_at' => Carbon::now(),
+                ]);
                 DB::table('products')->where('id', $prod->id)->update([
-                    'depot_id' => 8, //cần sửa
                     'agent_id' => $request->input('agent'),
                     'status_id' => 2,
-                    'owner_id' => $request->input('agent')
+                    'owner_id' => $request->input('agent'),
+                    'created_at' => Carbon::now()
                 ]);
             }
 
-            return redirect() -> route('factory.transfer_prod_to_agent', ['result' => true]);
+            return redirect() -> back() -> with(['message' => 'Chuyển kho thành công']);
         } else {
-            return redirect() -> route('factory.transfer_prod_to_agent', ['result' => false]);
+            return redirect() -> back() -> with(['message' => 'Số lượng hàng tồn kho không đủ !!!']);
         }
     }
 

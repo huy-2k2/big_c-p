@@ -13,8 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->unsignedBigInteger('range_id');
+        Schema::create('product_errors', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
         });
     }
 
@@ -25,8 +26,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn('range_id');
-        });
+        Schema::dropIfExists('product_errors');
     }
 };

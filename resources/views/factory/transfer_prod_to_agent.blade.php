@@ -16,9 +16,9 @@
           <label class="col-xs-10 col-sm-2 col-md-1 control-label">Dòng sản phẩm:</label>
           <div class="col-xs-10 col-xs-offset-0 col-sm-8 col-sm-offset-2 col-md-2 col-md-offset-0">
             <select class="form-control" name="range" id="range">
-                @foreach($lines as $line) {
+                @foreach($lines as $line) 
                   <option value={{ $line -> id }}>{{ $line -> name }}</option>
-                }
+                
                 @endforeach
             </select>
           </div>
@@ -30,9 +30,9 @@
         <label class="col-xs-10 col-sm-2 col-md-1 control-label">Đại lý:</label>
         <div class="col-xs-10 col-xs-offset-0 col-sm-8 col-sm-offset-2 col-md-2 col-md-offset-0">
           <select class="form-control" name="agent" id="agent">
-              @foreach($agents as $agent) {
+              @foreach($agents as $agent) 
                 <option value={{ $agent -> user_id }}>{{ (DB::table('users') -> where('id', '=', $agent -> user_id) -> first()) -> name }}</option>
-              }
+              
               @endforeach
           </select>
         </div>
