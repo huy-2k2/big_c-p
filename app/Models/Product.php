@@ -66,7 +66,7 @@ class Product extends Model
                 $content = 'Đại lý '. $name_from. ' đã giao sản phẩm '. $product . ' cho bạn';
                 
                 $notifi_function = new Product();
-                $notifi_function::create_notifi_transfer_product($title, $content, $user_id_to);
+                // $notifi_function::create_notifi_transfer_product($title, $content, $user_id_to);
 
                 DB::table('products') -> where('id', '=', $product_id)
                             ->update([
@@ -85,7 +85,7 @@ class Product extends Model
                     $content = 'Do sản phẩm cũ không thể sửa chữa được nên đại lý'. $name_from . ' đã giao sản phẩm mới là '. $product . ' cho bạn';
                                 
                     $notifi_function = new Product();
-                    $notifi_function::create_notifi_transfer_product($title, $content, $user_id_to);
+                    // $notifi_function::create_notifi_transfer_product($title, $content, $user_id_to);
 
                     DB::table('products') -> where('id', '=', $product_id)
                                 ->update([
@@ -99,7 +99,7 @@ class Product extends Model
                     $content = 'Đại lý '. $name_from. ' đã bảo hành sản phẩm '. $product . 'thành công và trả lại cho bạn';
                                 
                     $notifi_function = new Product();
-                    $notifi_function::create_notifi_transfer_product($title, $content, $user_id_to);
+                    // $notifi_function::create_notifi_transfer_product($title, $content, $user_id_to);
 
                     DB::table('products') -> where('id', '=', $product_id)
                                 ->update([
@@ -121,7 +121,7 @@ class Product extends Model
             $message = 'Yêu cầu bảo hành thành công';
 
             $notifi_function = new Product();
-            $notifi_function::create_notifi_transfer_product($title, $content, $user_id_to);
+            // $notifi_function::create_notifi_transfer_product($title, $content, $user_id_to);
             
             DB::table('products') -> where('id', '=', $product_id)
                         ->update([
@@ -146,7 +146,7 @@ class Product extends Model
             $message = 'Chuyển đến trung tâm bảo hành thành công';
             
             $notifi_function = new Product();
-            $notifi_function::create_notifi_transfer_product($title, $content, $user_id_to);
+            // $notifi_function::create_notifi_transfer_product($title, $content, $user_id_to);
 
             DB::table('products') -> where('id', '=', $product_id)
                         ->update([
@@ -163,7 +163,7 @@ class Product extends Model
             $message = 'Bảo hành thành công';
             
             $notifi_function = new Product();
-            $notifi_function::create_notifi_transfer_product($title, $content, $user_id_to);
+            // $notifi_function::create_notifi_transfer_product($title, $content, $user_id_to);
 
             $current_warranty_count = (DB::table('products') -> where('id', '=', $product_id)->first())->warranty_count;
             DB::table('products') -> where('id', '=', $product_id)
@@ -199,8 +199,8 @@ class Product extends Model
                 $content2 = 'Trung tâm bảo hành '. $name_from. ' đã báo sản phẩm '. $product  .' không thể sửa chữa. Nhà máy chưa có sản phẩm mới, vui lòng chờ';
                 
                 $notifi_function = new Product();
-                $notifi_function::create_notifi_transfer_product($title1, $content1, $user_id_to);
-                $notifi_function::create_notifi_transfer_product($title2, $content2, $product_detail->agent_id);
+                // $notifi_function::create_notifi_transfer_product($title1, $content1, $user_id_to);
+                // $notifi_function::create_notifi_transfer_product($title2, $content2, $product_detail->agent_id);
                 $message = 'Chuyển về cơ sở sản xuất thất bại';
 
                 return $message;
@@ -215,8 +215,8 @@ class Product extends Model
             $content2 = 'Trung tâm bảo hành '. $name_from. ' đã báo sản phẩm '. $product  .' không thể sửa chữa. Và nhà máy đã cung cấp cho đại lý sản phẩm mới. Vui lòng kiểm tra và chuyển lại cho người dùng';
             
             $notifi_function = new Product();
-            $notifi_function::create_notifi_transfer_product($title1, $content1, $user_id_to);
-            $notifi_function::create_notifi_transfer_product($title2, $content2, $product_detail->agent_id);
+            // $notifi_function::create_notifi_transfer_product($title1, $content1, $user_id_to);
+            // $notifi_function::create_notifi_transfer_product($title2, $content2, $product_detail->agent_id);
             $message = 'Chuyển về cơ sở sản xuất thành công';
 
             DB::table('products') -> where('id', '=', $new_product_id->id)

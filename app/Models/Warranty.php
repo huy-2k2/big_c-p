@@ -128,7 +128,9 @@ class Warranty extends Model
         $products = DB::table('products')
                     ->where('batch_id', $batch_id)
                     ->get();
-                    
+        
+        $warranty_id_temp = (DB::table('warranties')->first())->user_id;
+
         foreach($products as $product) {
             if($product -> status_id == 4 || $product -> status_id == 5) {
                 DB::table('products') -> where('id', '=', $product->id)
@@ -137,6 +139,7 @@ class Warranty extends Model
                             'status_id' => 7,
                             'owner_id' => $product->agent_id,
                             'warranty_count' => $product->warranty_count + 1,
+                            'warranty_id' => $warranty_id_temp,
                             'updated_at' => Carbon::now(),
                         ]); 
 

@@ -217,7 +217,8 @@ class AdminController extends Controller
 
     public function new_batch_recall(Request $request) {
         $users = User::all();
-        return view('admin.new_batch_recall', ['users' => $users]);
+        $batch_id = DB::table('products')->select('batch_id')->where('is_recall', 0)->groupBy('batch_id')->get();
+        return view('admin.new_batch_recall', ['users' => $users, 'batch_id'=>$batch_id]);
     }
 
     public function post_new_batch_recall(Request $request) {
@@ -289,7 +290,6 @@ class AdminController extends Controller
             if($agent) {
                 $agents[$product->id] = (DB::table('users')->where('id', $product->agent_id)->first())->name;
             } else {
-                dd($agent);
                 $agents[$product->id] = '';
             }
 
