@@ -46,6 +46,9 @@ Route::group(['middleware' => ['auth', 'verified', 'accepted', 'token']], functi
         Route::get('/new_batch_recall', [AdminController::class, 'new_batch_recall'])->name('new_batch_recall');
         Route::get('/post_new_batch_recall', [AdminController::class, 'post_new_batch_recall'])->name('post_new_batch_recall');
         Route::get('/return_batch_recall/{id}', [AdminController::class, 'return_batch_recall'])->name('return_batch_recall');
+    
+        Route::get('/show_account', [AdminController::class, 'show_account'])->name('show_account');
+        Route::get('/show_product', [AdminController::class, 'show_product'])->name('show_product');
     });
 
     Route::name('factory.')->prefix('factory')->middleware(['author:factory'])->group(function () {

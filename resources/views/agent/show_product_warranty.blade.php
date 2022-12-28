@@ -38,14 +38,13 @@
         <td>{{ (DB::table('users')->where('id', $product->customer_id)->first())->name }}</td>
         <td value="0">Đang chờ bảo hành</td>
         <td><select class="form-control" name="warranty_id" id="warranty_id">
-          @foreach($warranties as $warranty) {
+          @foreach($warranties as $warranty) 
             <option value={{ $warranty -> id }}>{{ $warranty -> name }}</option>
-          }
           @endforeach
         </select></td>
         <td><button class="btn btn-danger" type="submit">Chuyển đến TTBH</button></td>
         </form>
-      </tr>
+    </tr>
     @endforeach
        
     @foreach ($products_to_customer as $product)
@@ -58,7 +57,7 @@
         <td>{{ (DB::table('users')->where('id', $product->warranty_id)->first())->name }}</td>
         <td><button class="btn btn-success" type="submit">Trả người dùng</button></td>
         </form>
-      </tr>
+    </tr>
     @endforeach
 
   </tbody>
@@ -77,14 +76,14 @@
   $(document).ready(function(){
     $("#status_product").on("change", function() {
       var value_status_product = $(this).val();
-      
+
       if (value_status_product == 'all') {
         $("#myTable tr").filter(function() {
           $(this).show();
         });
       } else {
           $("#myTable tr").filter(function() {
-            $(this).toggle($(this).find("td:nth-child(3)").attr('value').indexOf(value_range) > -1);
+            $(this).toggle($(this).find('td:eq(2)').attr('value') === value_status_product);
           });
       }
     });

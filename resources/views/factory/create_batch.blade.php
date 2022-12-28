@@ -5,9 +5,9 @@
     <div class="form-group">
       <label for="range">Dòng sản phẩm</label>
       <select class="form-control" id="range" name="range">   
-        @foreach($ranges as $range) {
+        @foreach($ranges as $range) 
           <option value="{{ $range->id }}">{{ $range->name }}</option>
-        }
+        
         @endforeach
       </select>
       @error('range')
@@ -24,9 +24,9 @@
     <div class="form-group">
       <label for="depot">Kho chứa</label>
       <select class="form-control" id="depot" name="depot">   
-        @foreach($depots as $depot) {
+        @foreach($depots as $depot) 
           <option value="{{ $depot->id }}">{{ $depot->depot_name }}</option>
-        }
+        
         @endforeach
       </select>
       @error('depot')

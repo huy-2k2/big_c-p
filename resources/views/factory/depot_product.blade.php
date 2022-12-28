@@ -13,9 +13,9 @@
           <div class="col-xs-10 col-xs-offset-0 col-sm-8 col-sm-offset-2 col-md-2 col-md-offset-0">
             <select class="form-control" name="range" id="range">
                 <option value="all">Tất cả dòng sản phẩm</option>
-                @foreach($lines as $line) {
+                @foreach($lines as $line) 
                   <option value={{ $line -> id }}>{{ $line -> name }}</option>
-                }
+                
                 @endforeach
             </select>
           </div>
@@ -23,9 +23,9 @@
           <div class="col-xs-10 col-sm-8 col-md-2">
               <select class="form-control" name="depot" id="depot">
                   <option value="all">Tất cả kho</option>
-                  @foreach($depots as $depot) {
+                  @foreach($depots as $depot) 
                     <option value={{ $depot -> id }}>{{ $depot -> depot_name }}</option>
-                  }
+                  
                   @endforeach
               </select>
           </div>

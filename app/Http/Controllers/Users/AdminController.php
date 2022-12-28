@@ -253,4 +253,70 @@ class AdminController extends Controller
         return redirect()->back()->with(['message'=> $message]);
     }
 
+    public function show_account() {
+        $users = User::all();
+        $accounts = DB::table('users')->get();
+        $roles = [];
+        $addresses = [];
+
+        foreach($accounts as $account) {
+            $roles[$account->id] = (DB::table('roles')->where('id', $account->role_id)->first())->name;
+            $address = DB::table('addresses')->where('id', $account->address_id)->first();
+            $addresses[$account->id] = 'Tỉnh '. $address->province . ' - Huyện '. $address->district . ' - Xã '. $address->sub_district;
+            
+        }
+        
+        return view('admin.show_account', compact('users', 'accounts', 'roles', 'addresses'));
+    }
+
+    public function show_product() {
+        $users = User::all();
+        $products = DB::table('products')->get();
+        $agents = [];
+        $factories = [];
+        $warranties = [];
+        $customers = [];
+        $status = [];
+        $ranges = [];
+        $out_of_warranty = []; 
+
+        foreach($products as $product) {
+            $factories[$product->id] = (DB::table('users')->where('id', $product->factory_id)->first())->name;
+            $agent = DB::table('users')->where('id', $product->agent_id)->first();
+            $customer = DB::table('users')->where('id', $product->customer_id)->first();
+            $warranty = DB::table('users')->where('id', $product->warranty_id)->first();
+            
+            if($agent) {
+                $agents[$product->id] = (DB::table('users')->where('id', $product->agent_id)->first())->name;
+            } else {
+                dd($agent);
+                $agents[$product->id] = '';
+            }
+
+            if($warranty) {
+                $warranties[$product->id] = (DB::table('users')->where('id', $product->warranty_id)->first())->name;
+            } else {
+                $warranties[$product->id] = '';
+            }
+
+            if($customer) {
+                $customers[$product->id] = (DB::table('users')->where('id', $product->customer_id)->first())->name;
+            } else {
+                $customers[$product->id] = '';
+            }
+            
+            $ranges[$product->id] = (DB::table('ranges')->where('id', $product->range_id)->first())->name;
+            $status[$product->id] = (DB::table('statuses')->where('id', $product->status_id)->first())->name;
+        
+            if($product->out_of_warranty == 1) {
+                $out_of_warranty[$product->id] = 'Hết hạn bảo hành';
+            } else if($product -> out_of_warranty == 0 && $product->customer_id == null) {
+                $out_of_warranty[$product->id] = 'Chưa bán';
+            } else if($product -> out_of_warranty == 0 && $product->customer_id != null) {
+                $out_of_warranty[$product->id] = 'Còn hạn bảo hành';
+            }
+        }
+        
+        return view('admin.show_product', compact('users', 'products', 'agents', 'factories', 'warranties', 'customers', 'ranges', 'status', 'out_of_warranty'));
+    }
 }

@@ -13,9 +13,8 @@
           <div class="col-xs-10 col-xs-offset-0 col-sm-8 col-sm-offset-2 col-md-2 col-md-offset-0">
             <select class="form-control" name="range" id="range">
                 <option value="all">Tất cả dòng sản phẩm</option>
-                @foreach($lines as $line) {
+                @foreach($lines as $line) 
                   <option value={{ $line -> id }}>{{ $line -> name }}</option>
-                }
                 @endforeach
             </select>
           </div>
@@ -23,9 +22,8 @@
           <div class="col-xs-10 col-sm-8 col-md-2">
               <select class="form-control" name="depot" id="depot">
                   <option value="all">Tất cả kho</option>
-                  @foreach($depots as $depot) {
+                  @foreach($depots as $depot)
                     <option value={{ $depot -> id }}>{{ $depot -> depot_name }}</option>
-                  }
                   @endforeach
               </select>
           </div>
@@ -76,23 +74,23 @@
     $("#range").on("change", function() {
       var value_range = $(this).val();
       var value_depot = $("#depot").val();
-
+      
       if(value_range == 'all' && value_depot == 'all') {
         $("#myTable tr").filter(function() {
           $(this).show();
         });
       } else if(value_range != 'all' && value_depot == 'all') {
           $("#myTable tr").filter(function() {
-            $(this).toggle($(this).find("td:nth-child(1)").attr('value').indexOf(value_range) > -1);
+            $(this).toggle($(this).find("td:nth-child(1)").attr('value') === value_range);
           });
       } else if(value_range == 'all' && value_depot != 'all') {
           $("#myTable tr").filter(function() {
-            $(this).toggle($(this).find("td:nth-child(2)").attr('value').indexOf(value_depot) > -1);
+            $(this).toggle($(this).find("td:nth-child(2)").attr('value') === value_depot);
           });
       } else {
           $("#myTable tr").filter(function() {
-            $(this).toggle($(this).find("td:nth-child(1)").attr('value').indexOf(value_range) > -1
-                          && $(this).find("td:nth-child(2)").attr('value').indexOf(value_depot) > -1);
+            $(this).toggle($(this).find("td:nth-child(1)").attr('value') === value_range
+                          && $(this).find("td:nth-child(2)").attr('value') === value_depot);
           });
       }
       

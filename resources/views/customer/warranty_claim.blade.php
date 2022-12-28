@@ -14,9 +14,9 @@
     <li><label for="error_id">Lý do bảo hành: </label></li>
     <li>
       <select class="form-control" name="error_id" id="error_id">
-        @foreach($product_errors as $product_error) {
+        @foreach($product_errors as $product_error) 
           <option value={{ $product_error -> id }}>{{ $product_error -> name }}</option>
-        }
+        
         @endforeach
     </select>
     </li>

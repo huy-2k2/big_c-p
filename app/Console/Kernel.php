@@ -19,7 +19,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         //Kiểm tra vào mỗi phút
-        $schedule->command('product:checkEndDate')->everyMinute(); //->hourly();
+        $schedule->command('product:checkEndDate')->hourly(); //->everyMinute();
     }
 
     /**

@@ -30,9 +30,8 @@
                 <td><input style="display:none" name="quantity" value={{ $one_transfer_batch['quantity'] }}>{{ $one_transfer_batch['quantity'] }}</td>
                 <td>{{ $one_transfer_batch['created_at'] }}</td>
                 <td><select class="form-control" name="depot" id="depot">
-                    @foreach($depots as $depot) {
+                    @foreach($depots as $depot) 
                       <option value={{ $depot -> id }}>{{ $depot -> depot_name }}</option>
-                    }
                     @endforeach
                 </select></td>
                 <td><input type="number" class="form-control" id="quantity_to_depot" name="quantity_to_depot"></td>

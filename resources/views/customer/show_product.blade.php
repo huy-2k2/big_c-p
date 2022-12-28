@@ -15,7 +15,7 @@
       </tr>
     </thead>
     <tbody>
-      @foreach($products as $product) {
+      @foreach($products as $product) 
         <tr>
             <td>{{ $product->id }}</td>
             <td>{{ (DB::table('ranges')->where('id', $product->range_id)->first())->name }}</td>
@@ -39,7 +39,7 @@
               @endif
             </td>
         </tr>
-      } 
+      
       @endforeach
     </tbody>
   </table>
