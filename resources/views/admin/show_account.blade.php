@@ -1,31 +1,21 @@
 @extends('layouts.admin')
 @section('content')
-  <table class="table">
-    <caption>List of users</caption>
-    <thead>
-      <tr>
-        <th scope="col">Id tài khoản</th>
-        <th scope="col">Tên</th>
-        <th scope="col">Email</th>
-        <th scope="col">Xác thực lúc</th>
-        <th scope="col">Chấp nhận lúc</th>
-        <th scope="col">Vai trò</th>
-        <th scope="col">Địa chỉ</th>
-      </tr>
-    </thead>
-    <tbody>
-      @foreach($accounts as $account) 
-        <tr>
-          <td>{{ $account -> id }}</td>
-          <td>{{ $account -> name }}</td>
-          <td>{{ $account -> email }}</td>
-          <td>{{ $account -> email_verified_at }}</td>
-          <td>{{ $account -> account_accepted_at }}</td>
-          <td>{{ $roles[$account->id] }}</td>
-          <td>{{ $addresses[$account->id] }}</td>
-        </tr>
-      
-      @endforeach
-    </tbody>
-  </table>
+@php
+    $tbody = []
+@endphp
+@foreach ($users as $user)
+    @php
+        $tbody[] = [
+          $user->id,
+          $user->name,
+          $user->email,
+          $user->address->province . ', ' . $user->address->district . ', '. $user->address->sub_district,
+          "$user->created_at",
+          "$user->account_accepted_at"
+        ]
+    @endphp
+@endforeach
+<div class="relative overflow-x-auto shadow-md sm:rounded-lg custom-scrollbar">
+  @include('components.table', ['title' => 'tài khoản người dùng', 'ths' => ['id',  'tên', 'email','địa chỉ', 'thời gian tạo' , 'thời gian chấp nhận'], 'tbody' => $tbody])
+</div>
 @endsection     

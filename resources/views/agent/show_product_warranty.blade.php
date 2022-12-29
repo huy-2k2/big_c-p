@@ -1,92 +1,114 @@
 @extends('layouts.agent')
 @section('content')
-<div id="search_block" class="panel-body">
-  <form>
-      <div class="form-group row">
-          <label class="col-xs-10 col-sm-2 col-md-1 control-label" for="myInput">Search:</label>
-          <div class="col-xs-10 col-sm-8 col-md-4">
-              <input type="text" placeholder="Enter Search Keywords" value="" name="myInput" id="myInput" class="form-control">
-          </div>
-      </div>
-      <div class="form-group row">
-          <label class="col-xs-10 col-sm-2 col-md-1 control-label">Lọc theo:</label>
-          <div class="col-xs-10 col-xs-offset-0 col-sm-8 col-sm-offset-2 col-md-2 col-md-offset-0">
-            <select class="form-control" name="status_product" id="status_product">
-                <option value="all">Tất cả trạng thái</option>
-                <option value="0">Đang chờ bảo hành</option>
-                <option value="1">Bảo hành xong</option>
-            </select>
-          </div>
-      </div>
-  </form>
+@php
+    $tbody = [];
+    $options = [];
+@endphp
+
+@foreach ($warranties as $warranty)
+  @php
+      $options[] = [
+        'title' => $warranty->name,
+        'value' => $warranty->id,
+      ]
+  @endphp
+@endforeach
+
+@foreach ($products_to_customer as $product)
+    @php
+        $tbody[] = [
+          'data-id' => $product->id,
+          $product->id,
+          (DB::table('users')->where('id', $product->customer_id)->first())->name,
+          'Bảo hành xong',
+          (DB::table('users')->where('id', $product->warranty_id)->first())->name,
+          ['title' => 'trả người dùng', 'class' => "return-customer font-medium hover:underline text-blue-600 cursor-pointer"],
+        ]
+    @endphp
+@endforeach
+
+@foreach ($products_to_warranty as $product)
+    @php
+        $tbody[] = [
+          'data-id' => $product->id,
+          $product->id,
+          (DB::table('users')->where('id', $product->customer_id)->first())->name,
+          'Đang chờ bảo hành',
+          'component' => ['name' => 'components.input_select', 'param' => ['name' => 'warranty_id', 'label' => 'chọn nơi bảo hành', 'options' => $options], 'class' => "warranty-$product->id min-w-[220px]"],
+          ['title' => 'bảo hành', 'class' => "warrant-product font-medium hover:underline text-blue-600 cursor-pointer"],
+        ]
+    @endphp
+@endforeach
+
+<div class="relative overflow-x-auto shadow-md sm:rounded-lg custom-scrollbar">
+  @include('components.table', ['title' => 'Bảo hành', 'ths' => ['id sản phẩm',  'người dùng sở hữu', 'trạng thái','trung tâm bảo hành', ['title' => 'chức năng', 'sr_only' => true]], 'tbody' => $tbody])
 </div>
 
-<table class="table table-striped table-hover">
-  <thead>
-    <th>Id sản phẩm</th>
-    <th>Người dùng sở hữu</th>
-    <th>Trạng thái</th>
-    <th>Trung tâm bảo hành</th>
-    <th>Chức năng</th>
-  </thead>
-  <tbody id='myTable'>
-    @foreach ($products_to_warranty as $product)
-    <tr>
-        <form method="POST" action={{ route('agent.transfer_error_prod_to_warranty') }}>
-          @csrf
-        <td><input style="display:none" name="product_id" value={{ $product->id }}>{{ $product -> id }}</td>
-        <td>{{ (DB::table('users')->where('id', $product->customer_id)->first())->name }}</td>
-        <td value="0">Đang chờ bảo hành</td>
-        <td><select class="form-control" name="warranty_id" id="warranty_id">
-          @foreach($warranties as $warranty) 
-            <option value={{ $warranty -> id }}>{{ $warranty -> name }}</option>
-          @endforeach
-        </select></td>
-        <td><button class="btn btn-danger" type="submit">Chuyển đến TTBH</button></td>
-        </form>
-    </tr>
-    @endforeach
-       
-    @foreach ($products_to_customer as $product)
-    <tr>
-        <form method="POST" action={{ route('agent.transfer_error_prod_return_to_customer') }}>
-          @csrf
-        <td><input style="display:none" name="product_id" value={{ $product->id }}>{{ $product -> id }}</td>
-        <td>{{ (DB::table('users')->where('id', $product->customer_id)->first())->name }}</td>
-        <td value="1">Bảo hành xong</td>
-        <td>{{ (DB::table('users')->where('id', $product->warranty_id)->first())->name }}</td>
-        <td><button class="btn btn-success" type="submit">Trả người dùng</button></td>
-        </form>
-    </tr>
-    @endforeach
-
-  </tbody>
-</table>
-
 <script>
-  $(document).ready(function(){
-    $("#myInput").on("keyup", function() {
-      var value = $(this).val().toLowerCase();
-      $("#myTable tr").filter(function() {
-        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-      });
-    });
-  });
+  (() => {
+    const warrant_btns = document.querySelectorAll('.warrant-product');
+    const return_btns = document.querySelectorAll('.return-customer');
 
-  $(document).ready(function(){
-    $("#status_product").on("change", function() {
-      var value_status_product = $(this).val();
-
-      if (value_status_product == 'all') {
-        $("#myTable tr").filter(function() {
-          $(this).show();
-        });
-      } else {
-          $("#myTable tr").filter(function() {
-            $(this).toggle($(this).find('td:eq(2)').attr('value') === value_status_product);
-          });
+    return_btns.forEach(btn => {
+      btn.onclick = function() {
+        const id = this.getAttribute('data-id');
+        axios.post("{{ route('agent.transfer_error_prod_return_to_customer') }}", {
+                        'access_token': getCookie('access_token'),
+                        'user_id': '{{ Auth::user()->id }}',
+                        'product_id': id,
+        }).then(({data})=> {
+          if(data.type == 'success') {
+            const table_body = document.querySelector('tbody')
+            table_body.removeChild(btn.parentElement)
+          }
+          toastr.options = {
+                    "closeButton" : true,
+                    "progressBar" : true
+          }
+          toastr[data.type](data.message);
+        }).catch(({response: {data: {errors}}}) => {
+            for (const key in errors) {
+                toastr.options = {
+                    "closeButton" : true,
+                    "progressBar" : true
+                }
+                toastr.error(errors[key][0]);
+            }
+          })
       }
     });
-  });
+    warrant_btns.forEach(btn => {
+      btn.onclick = function() {
+        const id = this.getAttribute('data-id');
+        const warranty_id = document.querySelector(`.warranty-${id} select`).value
+        axios.post("{{ route('agent.transfer_error_prod_to_warranty') }}", {
+            'access_token': getCookie('access_token'),
+            'user_id': '{{ Auth::user()->id }}',
+            'product_id': id,
+            'warranty_id': warranty_id
+        }).then(({data})=> {
+          if(data.type == 'success') {
+            const table_body = document.querySelector('tbody')
+            table_body.removeChild(btn.parentElement)
+          }
+          toastr.options = {
+            "closeButton" : true,
+            "progressBar" : true
+          }
+          toastr[data.type](data.message);
+        }).catch(({response: {data: {errors}}}) => {
+            for (const key in errors) {
+                toastr.options = {
+                    "closeButton" : true,
+                    "progressBar" : true
+                }
+                toastr.error(errors[key][0]);
+            }
+          })
+      
+      }
+    });
+  })()
 </script>
+
 @endsection

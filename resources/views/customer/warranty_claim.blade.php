@@ -1,6 +1,26 @@
 @extends('layouts.customer')
 @section('content')
-<form class="form-control" method="POST" action='{{ route('customer.send_warranty_claim') }}'>
+@php
+    $options = []
+@endphp
+@foreach($product_errors as $product_error) 
+  @php
+      $options[] = [
+        'title' => $product_error->name,
+        'value' => $product_error->id
+      ]
+  @endphp
+@endforeach
+<div class="max-w-[100vw]">
+  <form action="{{ route('customer.send_warranty_claim') }}" method="POST" class="w-[500px] max-w-full flex flex-col mx-auto gap-5 p-5 rounded-lg shadow-lg">
+      @csrf
+      <input type="text" class="hidden" name="product_id" value="{{ $product->id }}">
+      @include('components.input_select', ['name' => 'error_id', 'label' => 'lỗi bảo hành', 'options' => $options])
+      @include('components.textarea', ['name' => 'claim_reason', 'label' => 'chi tiết lỗi'])
+      @include('components.button_submit', ['text' => 'yêu cầu bảo hành'])
+  </form>
+</div>
+{{-- <form class="form-control" method="POST" action='{{ route('customer.send_warranty_claim') }}'>
   @csrf
   <ol>
     <input style="display:none"  name="product_id" value="{{ $product->id }}">
@@ -32,6 +52,6 @@
       </button>
     </li>
   </ol>
-</form>
+</form> --}}
 
 @endsection

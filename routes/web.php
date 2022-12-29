@@ -34,7 +34,7 @@ Route::group(['middleware' => ['auth', 'verified', 'accepted', 'token']], functi
         Route::post('/store_notifi', [AdminController::class, 'store_notifi'])->name('store_notifi');
         Route::get('/notifi', [AdminController::class, 'notifi'])->name('notifi');
         Route::get('/accept_user', [AdminController::class, 'accept_user'])->name('accept_user');
-        
+
         Route::get('/product_line', [AdminController::class, 'product_line'])->name('product_line');
         Route::get('/create_product_line', [AdminController::class, 'create_product_line'])->name('create_product_line');
         Route::post('/store_product_line', [AdminController::class, 'store_product_line'])->name('store_product_line');
@@ -44,11 +44,9 @@ Route::group(['middleware' => ['auth', 'verified', 'accepted', 'token']], functi
 
         Route::get('/show_batches_recall', [AdminController::class, 'show_batches_recall'])->name('show_batches_recall');
         Route::get('/new_batch_recall', [AdminController::class, 'new_batch_recall'])->name('new_batch_recall');
-        Route::get('/post_new_batch_recall', [AdminController::class, 'post_new_batch_recall'])->name('post_new_batch_recall');
-        Route::get('/return_batch_recall/{id}', [AdminController::class, 'return_batch_recall'])->name('return_batch_recall');
-    
+        Route::post('/post_new_batch_recall', [AdminController::class, 'post_new_batch_recall'])->name('post_new_batch_recall');
+
         Route::get('/show_account', [AdminController::class, 'show_account'])->name('show_account');
-        Route::get('/show_product', [AdminController::class, 'show_product'])->name('show_product');
     });
 
     Route::name('factory.')->prefix('factory')->middleware(['author:factory'])->group(function () {
@@ -59,10 +57,6 @@ Route::group(['middleware' => ['auth', 'verified', 'accepted', 'token']], functi
         Route::get('/factory_depots', [FactoryController::class, 'factory_depots'])->name('factory_depots');
         Route::get('/add_factory_depot', [FactoryController::class, 'add_factory_depot'])->name('add_factory_depot');
         Route::post('/add_factory_depot', [FactoryController::class, 'post_add_factory_depot'])->name('post_add_factory_depot');
-        Route::get('/delete_factory_depot/{id}', [FactoryController::class, 'delete_factory_depot'])->name('delete_factory_depot');
-        Route::get('/edit_factory_depot/{id}', [FactoryController::class, 'edit_factory_depot'])->name('edit_factory_depot');
-        Route::post('/edit_factory_depot/{id}', [FactoryController::class, 'put_edit_factory_depot'])->name('put_edit_factory_depot');
-
         Route::get('/transfer_prod_to_agent', [FactoryController::class, 'transfer_prod_to_agent'])->name('transfer_prod_to_agent');
         Route::post('/transfer_prod_to_agent', [FactoryController::class, 'post_transfer_prod_to_agent'])->name('post_transfer_prod_to_agent');
 
@@ -72,7 +66,7 @@ Route::group(['middleware' => ['auth', 'verified', 'accepted', 'token']], functi
         Route::post('print_statistic', [FactoryController::class, 'print_product_statistic'])->name('print_statistic');
 
         Route::get('sales_statistic', [FactoryController::class, 'product_sales_statistic'])
-        ->name('product_sales_statistic');
+            ->name('product_sales_statistic');
         Route::post('print_sales_statistic', [FactoryController::class, 'print_product_sales_statistic'])
         ->name('print_product_sales_statistic');
 
@@ -106,12 +100,15 @@ Route::group(['middleware' => ['auth', 'verified', 'accepted', 'token']], functi
         Route::get('/', [AgentController::class, 'index']);
         Route::get('/depot_product', [AgentController::class, 'depot_product'])->name('depot_product');
         Route::get('/waiting_products', [AgentController::class, 'waiting_products'])->name('waiting_products');
-        Route::get('/transfer_to_depot', [AgentController::class, 'transfer_to_depot'])->name('transfer_to_depot');
+
+        Route::get('/add_agent_depot', [AgentController::class, 'add_agent_depot'])->name('add_agent_depot');
+        Route::get('/agent_depots', [AgentController::class, 'agent_depots'])->name('agent_depots');
+        Route::post('/add_agent_depot', [AgentController::class, 'post_add_agent_depot'])->name('post_add_agent_depot');
 
         Route::get('/sell_to_customer', [AgentController::class, 'sell_to_customer'])->name('sell_to_customer');
-        Route::get('/check_sell_to_customer', [AgentController::class, 'check_sell_to_customer'])->name('check_sell_to_customer');
+        Route::post('/check_sell_to_customer', [AgentController::class, 'check_sell_to_customer'])->name('check_sell_to_customer');
         Route::post('/confirm_sell_to_customer', [AgentController::class, 'confirm_sell_to_customer'])->name('confirm_sell_to_customer');
-        
+
         Route::get('/show_product_warranty', [AgentController::class, 'show_product_warranty'])->name('show_product_warranty');
         Route::post('/transfer_error_prod_to_warranty', [AgentController::class, 'transfer_error_prod_to_warranty'])->name('transfer_error_prod_to_warranty');
         Route::post('/transfer_error_prod_return_to_customer', [AgentController::class, 'transfer_error_prod_return_to_customer'])->name('transfer_error_prod_return_to_customer');

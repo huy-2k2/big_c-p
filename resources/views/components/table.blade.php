@@ -33,10 +33,17 @@
                     </th>
                     @foreach ($tr as $key => $td)
                         @if(!is_string($key))
-                            <td @isset($tr['data-id']) data-id="{{ $tr['data-id'] }}" @endisset class="px-6 py-4 whitespace-nowrap @isset($td['class']) {{ $td['class'] }} @endisset">
+                            <td @if(isset($tr['data-id'] ) && !isset($td['data-id'])) data-id="{{ $tr['data-id'] }}" @endif @isset($td['data-id']) data-id="{{ $td['data-id'] }}" @endisset class="px-6 py-4 whitespace-nowrap @isset($td['class']) {{ $td['class'] }} @endisset">
                                 {!! $td['title'] ?? $td !!}
                             </td>
+                        @else
+                            @if ($key == 'component')
+                                <td @if(isset($tr['data-id'] ) && !isset($td['data-id'])) data-id="{{ $tr['data-id'] }}" @endif @isset($td['data-id']) data-id="{{ $td['data-id'] }}" @endisset class="px-6 py-4 whitespace-nowrap @isset($td['class']) {{ $td['class'] }} @endisset">
+                                    @include($td['name'], $td['param'])
+                                </td>
+                            @endif
                         @endif
+                        
                     @endforeach
                 </tr>
             @endforeach

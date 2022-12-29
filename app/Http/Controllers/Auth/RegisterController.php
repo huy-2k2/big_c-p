@@ -89,7 +89,7 @@ class RegisterController extends Controller
         $class_name = "App\\models\\" . ucfirst($address->user->role->name);
 
         call_user_func([$class_name, 'create'], [
-            'id' => $address->user->id
+            'user_id' => $address->user->id
         ]);
         return $address->user;
     }
