@@ -195,7 +195,7 @@ class AdminController extends Controller
             }
         }
         return (new ExcelsExport($list_products, ['Id', 'Status', 'Name', 'Property', 
-        'Factory', 'Agent']))->download('product_admin.xlsx');
+        'Factory', 'Agent', 'Create at']))->download('product_admin.xlsx');
         
     }
 

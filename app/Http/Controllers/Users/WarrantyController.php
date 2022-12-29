@@ -3,14 +3,22 @@
 namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
-use App\Models\Warranty;
 use App\Http\Requests\StoreWarrantyRequest;
 use App\Http\Requests\UpdateWarrantyRequest;
 use Illuminate\Support\Facades\DB;
-use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Models\Depot;
+use App\Models\Product;
+use Carbon\Carbon;
+use App\Models\Range;
+use App\Models\Status;
+use App\Models\User;
+use App\Models\Customer;
+use App\Models\Warranty;
+use App\Exports\ExcelsExport;
+use App\Events\CreateNotifiEvent;
+use App\Models\Notification;
 
 class WarrantyController extends Controller
 {
@@ -63,4 +71,68 @@ class WarrantyController extends Controller
         return redirect()->back()->with(['message'=> $message]);
         
     }
+
+    public function product_statistic()
+    {
+        return view('warranty.product_statistic', ['statuses' => Status::all()]);
+    }
+
+    public function print_product_statistic(Request $request)
+    {
+        $list_products = [];
+        $data_inputs = $request->all();
+        unset($data_inputs['_token']);
+        $excel = new ExcelsExport();
+        if (count($data_inputs) == 0)
+            $list_products[] = Product::excel_export(Product::where("warranty_id", Auth::user()->id)->get());
+        else {
+            foreach ($data_inputs as $key => $data_input) {
+                foreach ($data_input as $input_value) {
+                    if ($input_value != 0) {
+                        if ($key == 'months') {
+                            $list_products[] = Product::excel_export_product_by_month(
+                            Product::where("warranty_id", Auth::user()->id)->whereMonth("created_at", $input_value)->get());
+                        } else if ($key == 'status') {
+                            $list_products[] = Product::excel_export(Product::where("warranty_id", Auth::user()->id)
+                            ->where("{$key}_id", $input_value)->get());
+                        } else if ($key == 'quarter') {
+                            $from = 0;
+                            $to = 0;
+                            switch($input_value) {
+                                case('1') : 
+                                    $from = Carbon::now()->startOfYear(); 
+                                    $to = Carbon::now()->startOfYear()->addMonth(2);
+                                    break;
+                                case('2') : 
+                                    $from = Carbon::now()->startOfYear()->addMonth(3);
+                                    $to = Carbon::now()->startOfYear()->addMonth(5);
+                                    break;
+                                case('3') :
+                                    $from = Carbon::now()->startOfYear()->addMonth(6);
+                                    $to = Carbon::now()->startOfYear()->addMonth(8);
+                                    break;
+                                case("4") : 
+                                    $from = Carbon::now()->startOfYear()->addMonth(9);
+                                    $to = Carbon::now()->startOfYear()->addMonth(11);
+                                    break;
+                                default: 
+                            }
+                    
+                            $list_products[] = Product::excel_export_product_by_quarter(
+                            Product::where("warranty_id", Auth::user()->id)
+                            ->whereBetween("created_at", [$from, $to])->get());
+                        } else if ($key == 'year') {
+                            $list_products[] = Product::excel_export_product_by_year(
+                            Product::where("warranty_id", Auth::user()->id)
+                            ->whereYear("created_at", $input_value)->get());
+                        }
+                    }
+                }
+            }
+        }
+        $excel->setSheets($list_products);
+        $excel->setHeadings( ['Id', 'Status', 'Name', 'Property', 'Factory', 'Agent', 'Created at']);
+        return $excel->download('product_agent.xlsx');
+    }
+
 }

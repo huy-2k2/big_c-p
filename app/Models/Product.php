@@ -300,6 +300,10 @@ class Product extends Model
         return $this->belongsTo(Agent::class, 'agent_id', 'user_id');
     }
 
+    public function range() {
+        return $this->belongsTo(Range::class);
+    }
+
     public static function get_with_pivot_condition($table, $name)
     {
         return Self::whereHas($table, function (Builder $query) use ($name) {
@@ -337,6 +341,30 @@ class Product extends Model
         return null;
     }
 
+    public static function getRangeName($products) {
+        foreach($products as $product) {
+            $product['name'] = $product->range->name;
+            unset($product['factory_id'], $product['agent_id'], $product['warranty_count'],
+            $product['warranty_id'], $product['status_id'], $product['batch_id'], 
+            $product['depot_id'], $product['owner_id'], $product['customer_id'], $product['created_at'],
+            $product['updated_at'], $product['customer_buy_time'], $product['range_id'], $product['out_of_warranty'],
+            $product['end_date'], $product['is_recall']);
+        }
+        return $products;
+    }
+
+    public static function getAgentName($products) {
+        foreach($products as $product) {
+            $product['name'] = $product->agent->user->name;
+            unset($product['factory_id'], $product['agent_id'], $product['warranty_count'],
+            $product['warranty_id'], $product['status_id'], $product['batch_id'], 
+            $product['depot_id'], $product['owner_id'], $product['customer_id'], $product['created_at'],
+            $product['updated_at'], $product['customer_buy_time'], $product['range_id'], $product['out_of_warranty'],
+            $product['end_date'], $product['is_recall']);
+        }
+        return $products;
+    }
+
     public static function excel_export($products, $timeline = "")
     {
         foreach ($products as $product) {
@@ -351,6 +379,7 @@ class Product extends Model
             } else {
                 $product['agent'] = null;
             }
+        
             if ($timeline == "customer_by_time") {
                 $product['date'] = $product->customer_buy_time;
             } else {
@@ -360,7 +389,8 @@ class Product extends Model
             unset($product['factory_id'], $product['agent_id'], $product['warranty_count'],
             $product['warranty_id'], $product['status_id'], $product['batch_id'], 
             $product['depot_id'], $product['owner_id'], $product['customer_id'], $product['created_at'],
-            $product['updated_at'], $product['customer_buy_time']);
+            $product['updated_at'], $product['customer_buy_time'], $product['range_id'], $product['out_of_warranty'],
+            $product['end_date'], $product['is_recall']);
         }
         return $products;
     }
@@ -391,7 +421,8 @@ class Product extends Model
             unset($product['factory_id'], $product['agent_id'], $product['warranty_count'],
             $product['warranty_id'], $product['status_id'], $product['batch_id'], 
             $product['depot_id'], $product['owner_id'], $product['customer_id'], $product['created_at'],
-            $product['updated_at'], $product['customer_buy_time']);
+            $product['updated_at'], $product['customer_buy_time'], $product['range_id'], $product['out_of_warranty'],
+            $product['end_date'], $product['is_recall']);
         }
     return $products;
     }
@@ -423,7 +454,8 @@ class Product extends Model
             unset($product['factory_id'], $product['agent_id'], $product['warranty_count'],
             $product['warranty_id'], $product['status_id'], $product['batch_id'], 
             $product['depot_id'], $product['owner_id'], $product['customer_id'], $product['created_at'],
-            $product['updated_at'], $product['customer_buy_time']);
+            $product['updated_at'], $product['customer_buy_time'], $product['range_id'], $product['out_of_warranty'],
+            $product['end_date'], $product['is_recall']);
         }
     return $products;
     }
@@ -451,8 +483,62 @@ class Product extends Model
             unset($product['factory_id'], $product['agent_id'], $product['warranty_count'],
             $product['warranty_id'], $product['status_id'], $product['batch_id'], 
             $product['depot_id'], $product['owner_id'], $product['customer_id'], $product['created_at'],
-            $product['updated_at'], $product['customer_buy_time']);
+            $product['updated_at'], $product['customer_buy_time'], $product['range_id'], $product['out_of_warranty'],
+            $product['end_date'], $product['is_recall']);
         }
     return $products;
+    }
+
+    public static function products($warrantyProducts) {
+        $products = [];
+        foreach ($warrantyProducts as $warrantyProduct) {
+            if ($warrantyProduct->range_id != null)
+            {
+                $product = $warrantyProduct->range_id;
+                array_push($products, $product);
+            }
+        }
+        return $products;
+    }
+
+    public static function excel_export_defective($products) {
+        $list_products = [];
+        foreach ($products as $modelProduct) 
+        {
+            $product = $modelProduct[0];
+            unset($product['factory_id'], $product['agent_id'], $product['warranty_count'],
+            $product['warranty_id'], $product['status_id'], $product['batch_id'], 
+            $product['depot_id'], $product['owner_id'], $product['customer_id'], $product['created_at'],
+            $product['updated_at'], $product['customer_buy_time'], $product['range_id'], $product['out_of_warranty'],
+            $product['end_date'], $product['is_recall'], $product['id']);
+            $list_products[] = $product;
+        }
+        return $list_products;
+    }
+
+    public static function getProductFactory($warrantyProducts) 
+    {
+        $products = [];
+        foreach ($warrantyProducts as $warrantyProduct) {
+            if ($warrantyProduct->factory != null)
+            {
+                $product = $warrantyProduct->factory->user_id;
+                array_push($products, $product);
+            }
+        }
+        return $products;
+    }
+
+    public static function getProductAgent($warrantyProducts) 
+    {
+        $products = [];
+        foreach ($warrantyProducts as $warrantyProduct) {
+            if ($warrantyProduct->agent != null)
+            {
+                $product = $warrantyProduct->agent->user_id;
+                array_push($products, $product);
+            }
+        }
+        return $products;
     }
 }
