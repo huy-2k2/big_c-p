@@ -76,6 +76,12 @@ Route::group(['middleware' => ['auth', 'verified', 'accepted', 'token']], functi
         Route::post('print_sales_statistic', [FactoryController::class, 'print_product_sales_statistic'])
         ->name('print_product_sales_statistic');
 
+        Route::get('statistic_defective', [FactoryController::class, 'product_statistic_defective'])
+        ->name('product_statistic_defective');
+        Route::post('print_statistic_defective', [FactoryController::class, 'print_product_statistic_defective'])
+        ->name('print_statistic_defective');
+
+
     });
 
     Route::name('warranty.')->prefix('warranty')->middleware(['author:warranty'])->group(function () {
@@ -83,6 +89,9 @@ Route::group(['middleware' => ['auth', 'verified', 'accepted', 'token']], functi
         Route::get('/show_product', [WarrantyController::class, 'show_product'])->name('show_product');
         Route::get('/return_prod_to_agent/{id}', [WarrantyController::class, 'return_prod_to_agent'])->name('return_prod_to_agent');
         Route::get('/return_prod_to_factory/{id}', [WarrantyController::class, 'return_prod_to_factory'])->name('return_prod_to_factory');
+
+        Route::get('/statistic', [WarrantyController::class, 'product_statistic'])->name('product_statistic');
+        Route::post('/print_statistic', [WarrantyController::class, 'print_product_statistic'])->name('print_statistic');
 
     });
 
@@ -106,6 +115,14 @@ Route::group(['middleware' => ['auth', 'verified', 'accepted', 'token']], functi
         Route::get('/show_product_warranty', [AgentController::class, 'show_product_warranty'])->name('show_product_warranty');
         Route::post('/transfer_error_prod_to_warranty', [AgentController::class, 'transfer_error_prod_to_warranty'])->name('transfer_error_prod_to_warranty');
         Route::post('/transfer_error_prod_return_to_customer', [AgentController::class, 'transfer_error_prod_return_to_customer'])->name('transfer_error_prod_return_to_customer');
+
+        Route::get('statistic', [AgentController::class, 'product_statistic'])->name('product_statistic');
+        Route::post('print_statistic', [AgentController::class, 'print_product_statistic'])->name('print_statistic');
+
+        Route::get('sales_statistic', [AgentController::class, 'product_sales_statistic'])
+        ->name('product_sales_statistic');
+        Route::post('print_sales_statistic', [AgentController::class, 'print_product_sales_statistic'])
+        ->name('print_product_sales_statistic');
     });
 
     Route::post('password/change', [ChangePasswordController::class, 'index'])->name('password.change');

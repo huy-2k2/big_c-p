@@ -12,6 +12,7 @@ use App\Models\Product;
 use App\Models\Range;
 use App\Models\Status;
 use App\Models\User;
+use App\Models\WarrantyProduct;
 use Carbon\Carbon;
 use App\Exports\ExcelsExport;
 use App\Events\CreateNotifiEvent;
@@ -224,7 +225,6 @@ class FactoryController extends Controller
             }
         }
         $excel->setSheets($list_products);
-        //dd($list_products);
         $excel->setHeadings( ['Id', 'Status', 'Name', 'Property', 'Factory', 'Agent', 'Created at']);
         return $excel->download('product_factory.xlsx');
     }
@@ -238,6 +238,7 @@ class FactoryController extends Controller
         $list_products = [];
         $data_inputs = $request->all();
         unset($data_inputs['_token']);
+        dd($data_inputs);
         $excel = new ExcelsExport();
         if (count($data_inputs) == 0)
             $list_products[] = Product::excel_export(Product::where("factory_id", Auth::user()->id)->get(), 'customer_by_time');
@@ -291,4 +292,112 @@ class FactoryController extends Controller
         $excel->setHeadings( ['Id', 'Status', 'Name', 'Property', 'Factory', 'Agent', 'Customer buy time']);
         return $excel->download('product_sales_factory.xlsx');
     }
+
+
+    public function product_statistic_defective() {
+        // $ranges = Product::getRangeName(Product::where('factory_id', Auth::user()->id)->groupBy('range_id')->get());
+        // $factories = User::get_users_with_role('factory');
+        // $agents = Product::getAgentName(Product::where('factory_id', Auth::user()->id)->where('agent_id', '!=', null)
+        // ->groupBy('agent_id')->get());
+        return view('factory.product_statistic_defective');
+    }
+
+    public function print_product_statistic_defective(Request $request) {
+        $list_products = [];
+        $data_inputs = $request->all();
+        unset($data_inputs['_token']);
+        if (count($data_inputs) == 0)
+            return redirect()->route('factory.product_statistic_defective');
+        else {
+            foreach ($data_inputs as $key => $data_input) {
+                if ($key == 'ranges') {
+                    $defective_products = WarrantyProduct::groupBy('product_id')
+                    ->join('products', 'products.id', '=', 'product_id')
+                    ->where('factory_id', '=', Auth::user()->id)->get();
+                    $count_defective_by_range_id = array_count_values(WarrantyProduct::getProductName($defective_products));
+                    $products = Product::all();
+                    $count_product_by_range_id = array_count_values(Product::products($products));
+                    $defective_rate_array = [];
+                    foreach ($count_defective_by_range_id as $key => $defective)
+                    {
+                        foreach($count_product_by_range_id as $keyProduct => $product) {
+                            if ($key == $keyProduct) {
+                                array_push($defective_rate_array, ['id' => $key, 'rate' => $defective/$product]);
+                            }
+                        }
+                    }
+                    $defective_product_statistics = [];
+                    foreach ($defective_rate_array as $defective_rate) {
+                        $product = Product::where('range_id', '=', $defective_rate['id'])
+                        ->groupBY('range_id')->get();
+                        $product[0]['range id'] = $defective_rate['id'];
+                        $product[0]['range name'] = $product[0]->range->name;
+                        $product[0]['defective rate'] = $defective_rate['rate'];
+                        $defective_product_statistics[] = $product;
+                    }
+                    $list_products[] = collect(Product::excel_export_defective($defective_product_statistics));
+                } else if ($key == 'factories') {
+                    $defective_products = WarrantyProduct::groupBy('product_id')
+                    ->join('products', 'products.id', '=', 'product_id')->get();
+                    $count_defective_by_factory_id = array_count_values(WarrantyProduct::getProductFactory($defective_products));
+                    $products = Product::all();
+                    $count_product_by_factory_id = array_count_values(Product::getProductFactory($products));
+
+                    $defective_rate_array = [];
+                    foreach ($count_defective_by_factory_id as $key => $defective)
+                    {
+                        foreach($count_product_by_factory_id as $keyProduct => $product) {
+                            if ($key == $keyProduct) {
+                                array_push($defective_rate_array, ['id' => $key, 'rate' => $defective/$product]);
+                            }
+                        }
+                    }
+                    $defective_product_statistics = [];
+                    foreach ($defective_rate_array as $defective_rate) {
+                        $product = Product::where('factory_id', '=', $defective_rate['id'])
+                        ->groupBY('factory_id')->get();
+                        $product[0]['factory id'] = $defective_rate['id'];
+                        if (!empty($product[0]->factory->user)) {
+                            $product[0]['factory name'] = $product[0]->factory->user->name;
+                        }
+                        $product[0]['defective rate'] = $defective_rate['rate'];
+                        $defective_product_statistics[] = $product;
+                    }
+                    $list_products[] = collect(Product::excel_export_defective($defective_product_statistics));
+
+                } else if ($key == 'agents') {
+                    $defective_products = WarrantyProduct::groupBy('product_id')
+                    ->join('products', 'products.id', '=', 'product_id')->get();
+                    $count_defective_by_agent_id = array_count_values(WarrantyProduct::getProductAgent($defective_products));
+                    $products = Product::all();
+                    $count_product_by_agent_id = array_count_values(Product::getProductAgent($products));
+                    $defective_rate_array = [];
+                    foreach ($count_defective_by_agent_id as $key => $defective)
+                    {
+                        foreach($count_product_by_agent_id as $keyProduct => $product) {
+                            if ($key == $keyProduct) {
+                                array_push($defective_rate_array, ['id' => $key, 'rate' => $defective/$product]);
+                            }
+                        }
+                    }
+                    $defective_product_statistics = [];
+                    foreach ($defective_rate_array as $defective_rate) {
+                        $product = Product::where('agent_id', '=', $defective_rate['id'])
+                        ->groupBY('agent_id')->get();
+                        $product[0]['agent id'] = $defective_rate['id'];
+                        if (!empty($product[0]->agent->user)) {
+                            $product[0]['agent name'] = $product[0]->agent->user->name;
+                        }
+                        $product[0]['defective rate'] = $defective_rate['rate'];
+                        $defective_product_statistics[] = $product;
+                    }
+                    $list_products[] = collect(Product::excel_export_defective($defective_product_statistics));
+                }
+            }
+        }
+        //dd($list_products);
+        return (new ExcelsExport($list_products, ['Id', 'Name', 'Defective Rate']))
+        ->download('product_defective_by_range.xlsx');
+    }
+
 }
