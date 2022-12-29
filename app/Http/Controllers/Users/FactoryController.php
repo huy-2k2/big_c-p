@@ -182,43 +182,66 @@ class FactoryController extends Controller
         else {
             foreach ($data_inputs as $key => $data_input) {
                 foreach ($data_input as $input_value) {
-                    if ($input_value != 0) {
-                        if ($key == 'months') {
+                    if ($key == 'months') {
+                        if ($input_value != 0) {
                             $list_products[] = Product::excel_export_product_by_month(
-                            Product::where("factory_id", Auth::user()->id)->whereMonth("created_at", $input_value)->get());
-                        } else if ($key == 'status') {
+                                Product::where("factory_id", Auth::user()->id)
+                                ->whereMonth("created_at", $input_value)->get(),
+                                'created_at');
+                        } else {
+                            $list_products[] = Product::excel_export_product_by_month(
+                                Product::where("factory_id", Auth::user()->id)
+                                ->whereMonth("created_at", "!=", null)->get(),
+                                'created_at');
+                        }
+                    } else if ($key == 'status') {
+                        if ($input_value != 0) {
                             $list_products[] = Product::excel_export(Product::where("factory_id", Auth::user()->id)
-                            ->where("{$key}_id", $input_value)->get());
-                        } else if ($key == 'quarter') {
-                            $from = 0;
-                            $to = 0;
-                            switch($input_value) {
-                                case('1') : 
-                                    $from = Carbon::now()->startOfYear(); 
-                                    $to = Carbon::now()->startOfYear()->addMonth(2);
-                                    break;
-                                case('2') : 
-                                    $from = Carbon::now()->startOfYear()->addMonth(3);
-                                    $to = Carbon::now()->startOfYear()->addMonth(5);
-                                    break;
-                                case('3') :
-                                    $from = Carbon::now()->startOfYear()->addMonth(6);
-                                    $to = Carbon::now()->startOfYear()->addMonth(8);
-                                    break;
-                                case("4") : 
-                                    $from = Carbon::now()->startOfYear()->addMonth(9);
-                                    $to = Carbon::now()->startOfYear()->addMonth(11);
-                                    break;
-                                default: 
-                            }
-                    
+                            ->where("{$key}_id", $input_value)->get(), 'created_at');
+                        } else {
+                            $list_products[] = Product::excel_export(Product::where("factory_id", Auth::user()->id)
+                        ->where("{$key}_id", "!=", null)->get(), 'created_at');
+                        }
+                    } else if ($key == 'quarter') {
+                        $from = 0;
+                        $to = 0;
+                        switch($input_value) {
+                            case('1') : 
+                                $from = Carbon::now()->startOfYear(); 
+                                $to = Carbon::now()->startOfYear()->addMonth(2)->endOfMonth();
+                                break;
+                            case('2') : 
+                                $from = Carbon::now()->startOfYear()->addMonth(3);
+                                $to = Carbon::now()->startOfYear()->addMonth(5)->endOfMonth();
+                                break;
+                            case('3') :
+                                $from = Carbon::now()->startOfYear()->addMonth(6);
+                                $to = Carbon::now()->startOfYear()->addMonth(8)->endOfMonth();
+                                break;
+                            case("4") : 
+                                $from = Carbon::now()->startOfYear()->addMonth(9);
+                                $to = Carbon::now()->startOfYear()->addMonth(11)->endOfMonth();
+                                break;
+                            default: 
+                        }
+                        if ($input_value != 0) {
                             $list_products[] = Product::excel_export_product_by_quarter(
-                            Product::where("factory_id", Auth::user()->id)
-                            ->whereBetween("created_at", [$from, $to])->get());
-                        } else if ($key == 'year') {
+                                Product::where("factory_id", Auth::user()->id)
+                                ->whereBetween("created_at", [$from, $to])->get(), 'created_at');
+                        } else {
+                            $list_products[] = Product::excel_export_product_by_quarter(
+                                Product::where("factory_id", Auth::user()->id)
+                                ->whereYear("created_at", Carbon::now()->year)->get(), 'created_at');
+                        }
+                    } else if ($key == 'year') {
+                        if ($input_value != 0) {
                             $list_products[] = Product::excel_export_product_by_year(
-                            Product::where("factory_id", Auth::user()->id)
-                            ->whereYear("created_at", $input_value)->get());
+                                Product::where("factory_id", Auth::user()->id)
+                                ->whereYear("created_at", $input_value)->get(), 'created_at');
+                        } else {
+                            $list_products[] = Product::excel_export_product_by_year(
+                                Product::where("factory_id", Auth::user()->id)
+                                ->whereYear('created_at', '!=', 0)->get(), 'created_at');
                         }
                     }
                 }
@@ -244,45 +267,70 @@ class FactoryController extends Controller
         else {
             foreach ($data_inputs as $key => $data_input) {
                 foreach ($data_input as $input_value) {
-                    if ($input_value != 0) {
-                        if ($key == 'months') {
+                    if ($key == 'months') {
+                        if ($input_value != 0) {
                             $list_products[] = Product::excel_export_product_by_month(
-                            Product::where("factory_id", Auth::user()->id)->whereMonth("customer_buy_time", $input_value)->get(),
-                            'customer_by_time');
-                        } else if ($key == 'status') {
+                                Product::where("factory_id", Auth::user()->id)
+                                ->whereMonth("customer_buy_time", $input_value)->get(),
+                                'customer_by_time');
+                        } else {
+                            $list_products[] = Product::excel_export_product_by_month(
+                                Product::where("factory_id", Auth::user()->id)
+                                ->whereMonth("customer_buy_time", "!=", null)->get(),
+                                'customer_by_time');
+                        }
+                    } else if ($key == 'status') {
+                        if ($input_value != 0) {
                             $list_products[] = Product::excel_export(Product::where("factory_id", Auth::user()->id)
                             ->where("{$key}_id", $input_value)->get(), 'customer_by_time');
-                        } else if ($key == 'quarter') {
-                            $from = 0;
-                            $to = 0;
-                            switch($input_value) {
-                                case('1') : 
-                                    $from = Carbon::now()->startOfYear(); 
-                                    $to = Carbon::now()->startOfYear()->addMonth(2);
-                                    break;
-                                case('2') : 
-                                    $from = Carbon::now()->startOfYear()->addMonth(3);
-                                    $to = Carbon::now()->startOfYear()->addMonth(5);
-                                    break;
-                                case('3') :
-                                    $from = Carbon::now()->startOfYear()->addMonth(6);
-                                    $to = Carbon::now()->startOfYear()->addMonth(8);
-                                    break;
-                                case("4") : 
-                                    $from = Carbon::now()->startOfYear()->addMonth(9);
-                                    $to = Carbon::now()->startOfYear()->addMonth(11);
-                                    break;
-                                default: 
-                            }
-                    
-                            $list_products[] = Product::excel_export_product_by_quarter(
-                            Product::where("factory_id", Auth::user()->id)
-                            ->whereBetween("customer_buy_time", [$from, $to])->get(), 'customer_by_time');
-                        } else if ($key == 'year') {
-                            $list_products[] = Product::excel_export_product_by_year(
-                            Product::where("factory_id", Auth::user()->id)
-                            ->whereYear("customer_buy_time", $input_value)->get(), 'customer_by_time');
+                        } else {
+                            $list_products[] = Product::excel_export(Product::where("factory_id", Auth::user()->id)
+                        ->where("{$key}_id", "!=", null)->get(), 'customer_by_time');
                         }
+                        
+                    } else if ($key == 'quarter') {
+                        $from = 0;
+                        $to = 0;
+                        switch($input_value) {
+                            case('1') : 
+                                $from = Carbon::now()->startOfYear(); 
+                                $to = Carbon::now()->startOfYear()->addMonth(2)->endOfMonth();
+                                break;
+                            case('2') : 
+                                $from = Carbon::now()->startOfYear()->addMonth(3);
+                                $to = Carbon::now()->startOfYear()->addMonth(5)->endOfMonth();
+                                break;
+                            case('3') :
+                                $from = Carbon::now()->startOfYear()->addMonth(6);
+                                $to = Carbon::now()->startOfYear()->addMonth(8)->endOfMonth();
+                                break;
+                            case("4") : 
+                                $from = Carbon::now()->startOfYear()->addMonth(9);
+                                $to = Carbon::now()->startOfYear()->addMonth(11)->endOfMonth();
+                                break;
+                            default: 
+                                break;
+                        }
+                        if ($input_value != 0) {
+                            $list_products[] = Product::excel_export_product_by_quarter(
+                                Product::where("factory_id", Auth::user()->id)
+                                ->whereBetween("customer_buy_time", [$from, $to])->get(), 'customer_by_time');
+                        } else {
+                            $list_products[] = Product::excel_export_product_by_quarter(
+                                Product::where("factory_id", Auth::user()->id)
+                                ->whereYear("customer_buy_time", Carbon::now()->year)->get(), 'customer_by_time');
+                        }
+                    } else if ($key == 'year') {
+                        if ($input_value != 0) {
+                            $list_products[] = Product::excel_export_product_by_year(
+                                Product::where("factory_id", Auth::user()->id)
+                                ->whereYear("customer_buy_time", $input_value)->get(), 'customer_by_time');
+                        } else {
+                            $list_products[] = Product::excel_export_product_by_year(
+                                Product::where("factory_id", Auth::user()->id)
+                                ->whereYear('customer_buy_time', '!=', 0)->get(), 'customer_by_time');
+                        }
+                        
                     }
                 }
             }
@@ -294,10 +342,6 @@ class FactoryController extends Controller
 
 
     public function product_statistic_defective() {
-        // $ranges = Product::getRangeName(Product::where('factory_id', Auth::user()->id)->groupBy('range_id')->get());
-        // $factories = User::get_users_with_role('factory');
-        // $agents = Product::getAgentName(Product::where('factory_id', Auth::user()->id)->where('agent_id', '!=', null)
-        // ->groupBy('agent_id')->get());
         return view('factory.product_statistic_defective');
     }
 
