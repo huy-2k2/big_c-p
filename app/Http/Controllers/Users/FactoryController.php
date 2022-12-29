@@ -238,7 +238,6 @@ class FactoryController extends Controller
         $list_products = [];
         $data_inputs = $request->all();
         unset($data_inputs['_token']);
-        dd($data_inputs);
         $excel = new ExcelsExport();
         if (count($data_inputs) == 0)
             $list_products[] = Product::excel_export(Product::where("factory_id", Auth::user()->id)->get(), 'customer_by_time');
