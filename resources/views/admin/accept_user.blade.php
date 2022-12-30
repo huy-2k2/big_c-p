@@ -17,7 +17,7 @@
             @endphp
         @endif
     @endforeach
-    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg custom-scrollbar">
         @include('components.table', ['title' => 'người dùng', 'ths' => ['tên', 'email', 'thời gian tạo', ['title' => 'chấp nhận', 'sr_only' => true], ['title' => 'xóa', 'sr_only' => true]], 'tbody' => $tbody])
     </div>
     <script>
@@ -34,13 +34,11 @@
                         user_accept_id: this.getAttribute('data-id')
                     })
                     .then(({data}) => {
-                        if(data) {
-                            toastr.options = {
-                                "closeButton" : true,
-                                "progressBar" : true
-                            }
-                            toastr.success("chấp nhận người dùng thành công");
+                        toastr.options = {
+                            "closeButton" : true,
+                            "progressBar" : true
                         }
+                        toastr.success("chấp nhận người dùng thành công");
                     })
                 }
             });
@@ -64,16 +62,6 @@
                     })
                 }
             });
-
-            function handle_remove_submited(element)  {
-                const id = element.getAttribute('data-id')
-                table_body.removeChild(element.parentElement)
-                const stt_users = document.querySelectorAll('.stt');
-                stt_users.forEach(stt => {
-                    if(stt.getAttribute('data-id') > id)
-                        stt.innerText -= 1
-                })
-            }
         })();
     </script>
     @parent

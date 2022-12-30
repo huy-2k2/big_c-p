@@ -22,24 +22,20 @@ use App\Models\Notification;
 
 class WarrantyController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(['author:warranty']);
-    }
-
     public function index()
     {
         return view('warranty.main');
     }
 
-    public function show_product() {
+    public function show_product()
+    {
         $products = Product::get_product(['warranty_id', 'status_id', 'is_recall'], [Auth::user()->id, 5, 0]);
         $warranty_products = DB::table('warranty_products')->where('status', 0)->get();
-        
+
         $reasons = [];
         $error_name = [];
 
-        foreach($warranty_products as $warranty_product) {
+        foreach ($warranty_products as $warranty_product) {
             $reasons[$warranty_product->product_id] = $warranty_product->reason;
             $error_name[$warranty_product->product_id] = (DB::table('product_errors')->where('id', $warranty_product->product_error_id)->first())->name;
         }
@@ -47,29 +43,32 @@ class WarrantyController extends Controller
         return view('warranty.show_product', compact('products', 'reasons', 'error_name'));
     }
 
-    public function return_prod_to_agent($product_id) {
-        $product = Product::get_product(['id'], [$product_id])->first();
-        
-        if($product->status_id != 5 && $product->warranty_id != Auth::user()->id) {
-            return redirect()->back()->with(['message'=>'Không tìm thấy sản phẩm']);
+    public function return_prod_to_agent(Request $request)
+    {
+        $product = Product::get_product(['id'], [$request->product_id])->first();
+
+        if ($product->status_id != 5 && $product->warranty_id != $request->user_id) {
+            // return redirect()->back()->with(['message' => 'Không tìm thấy sản phẩm']);
+            return response()->json(['type' => 'error', 'message' => 'không tìm thấy sản phẩm']);
         }
 
-        $message = Product::transfer_product(Auth::user()->id, $product->agent_id, $product_id, 7);
-        
-        return redirect()->back()->with(['message'=> $message]);
+        Product::transfer_product($request->user_id, $product->agent_id, $request->product_id, 7);
+
+        // return redirect()->back()->with(['message' => $message]);
+        return response()->json(['type' => 'success', 'message' => 'bảo hành thành công']);
     }
 
-    public function return_prod_to_factory($product_id) {
-        $product = Product::get_product(['id'], [$product_id])->first();
-        
-        if($product->status_id != 5 && $product->warranty_id != Auth::user()->id) {
-            return redirect()->back()->with(['message'=>'Không tìm thấy sản phẩm']);
+    public function return_prod_to_factory(Request $request)
+    {
+        $product = Product::get_product(['id'], [$request->product_id])->first();
+
+        if ($product->status_id != 5 && $product->warranty_id != $request->user_id) {
+            return response()->json(['type' => 'error', 'message' => 'không tìm thấy sản phẩm']);
         }
 
-        $message = Product::transfer_product(Auth::user()->id, $product->factory_id, $product_id, 8);
-        
-        return redirect()->back()->with(['message'=> $message]);
-        
+        $message = Product::transfer_product($request->user_id, $product->factory_id, $request->product_id, 8);
+
+        return response()->json(['type' => 'success', 'message' => 'chuyển về nhà máy thành công']);
     }
 
     public function product_statistic()
@@ -93,70 +92,79 @@ class WarrantyController extends Controller
                         if ($input_value != 0) {
                             $list_products[] = Product::excel_export_product_by_month(
                                 Product::where($warranty_id, Auth::user()->id)
-                                ->whereMonth("created_at", $input_value)->get(),
-                                'created_at');
+                                    ->whereMonth("created_at", $input_value)->get(),
+                                'created_at'
+                            );
                         } else {
                             $list_products[] = Product::excel_export_product_by_month(
                                 Product::where($warranty_id, Auth::user()->id)
-                                ->whereMonth("created_at", "!=", null)->get(),
-                                'created_at');
+                                    ->whereMonth("created_at", "!=", null)->get(),
+                                'created_at'
+                            );
                         }
                     } else if ($key == 'status') {
                         if ($input_value != 0) {
                             $list_products[] = Product::excel_export(Product::where($warranty_id, Auth::user()->id)
-                            ->where("{$key}_id", $input_value)->get(), 'created_at');
+                                ->where("{$key}_id", $input_value)->get(), 'created_at');
                         } else {
                             $list_products[] = Product::excel_export(Product::where($warranty_id, Auth::user()->id)
-                        ->where("{$key}_id", "!=", null)->get(), 'created_at');
+                                ->where("{$key}_id", "!=", null)->get(), 'created_at');
                         }
                     } else if ($key == 'quarter') {
                         $from = 0;
                         $to = 0;
-                        switch($input_value) {
-                            case('1') : 
-                                $from = Carbon::now()->startOfYear(); 
+                        switch ($input_value) {
+                            case ('1'):
+                                $from = Carbon::now()->startOfYear();
                                 $to = Carbon::now()->startOfYear()->addMonth(2)->endOfMonth();
                                 break;
-                            case('2') : 
+                            case ('2'):
                                 $from = Carbon::now()->startOfYear()->addMonth(3);
                                 $to = Carbon::now()->startOfYear()->addMonth(5)->endOfMonth();
                                 break;
-                            case('3') :
+                            case ('3'):
                                 $from = Carbon::now()->startOfYear()->addMonth(6);
                                 $to = Carbon::now()->startOfYear()->addMonth(8)->endOfMonth();
                                 break;
-                            case("4") : 
+                            case ("4"):
                                 $from = Carbon::now()->startOfYear()->addMonth(9);
                                 $to = Carbon::now()->startOfYear()->addMonth(11)->endOfMonth();
                                 break;
-                            default: 
+                            default:
                         }
                         if ($input_value != 0) {
                             $list_products[] = Product::excel_export_product_by_quarter(
                                 Product::where($warranty_id, Auth::user()->id)
-                                ->whereBetween("created_at", [$from, $to])->get(), 'created_at');
+                                    ->whereBetween("created_at", [$from, $to])->get(),
+                                'created_at'
+                            );
                         } else {
                             $list_products[] = Product::excel_export_product_by_quarter(
                                 Product::where($warranty_id, Auth::user()->id)
-                                ->whereYear("created_at", Carbon::now()->year)->get(), 'created_at');
+                                    ->whereYear("created_at", Carbon::now()->year)->get(),
+                                'created_at'
+                            );
                         }
                     } else if ($key == 'year') {
                         if ($input_value != 0) {
                             $list_products[] = Product::excel_export_product_by_year(
                                 Product::where($warranty_id, Auth::user()->id)
-                                ->whereYear("created_at", $input_value)->get(), 'created_at');
+                                    ->whereYear("created_at", $input_value)->get(),
+                                'created_at'
+                            );
                         } else {
                             $list_products[] = Product::excel_export_product_by_year(
                                 Product::where($warranty_id, Auth::user()->id)
-                                ->whereYear('created_at', '!=', 0)->get(), 'created_at');
+                                    ->whereYear('created_at', '!=', 0)->get(),
+                                'created_at'
+                            );
                         }
                     }
                 }
             }
         }
         $excel->setSheets($list_products);
-        $excel->setHeadings( ['Id', 'Status', 'Name', 'Property', 'Factory', 'Agent', 'Created at']);
+        $excel->setHeadings(['Id', 'Status', 'Name', 'Property', 'Factory', 'Agent', 'Created at']);
         return $excel->download('product_agent.xlsx');
     }
-
 }

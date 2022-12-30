@@ -1,10 +1,10 @@
 @extends('layouts.factory')
 @section('content')
-<div id="search_block" class="panel-body">
+{{-- <div id="search_block" class="panel-body">
   <form class="form-horizontal" method="POST" action='{{ route('factory.post_transfer_prod_to_agent') }}'>
       @csrf
       <div class="form-group row">
-          <label class="col-xs-10 col-sm-2 col-md-1 control-label" for="quantity_prod">Số lượng:</label>
+          <label class="col-xs-10 col-sm-2 col-md-1 control-label" for="quantity_prod">Số lượngg:</label>
           <div class="col-xs-10 col-sm-8 col-md-4">
               <input type="number" placeholder="Nhập số lượng sản phẩm" name="quantity_prod" id="quantity_prod" class="form-control">
           </div>
@@ -43,6 +43,35 @@
 
     <button class="btn btn-success" type="submit">Xuất kho</button>
   </form>
+</div> --}}
+@php
+    $range_options = [];
+    $agent_options = [];
+@endphp
+@foreach ($ranges as $range)
+    @php
+        $range_options[] = [
+          'value' => $range->id,
+          'title' => $range->name
+        ]
+    @endphp
+@endforeach
+@foreach ($agents as $agent)
+    @php
+        $agent_options[] = [
+          'value' => $agent->user_id,
+          'title' => $agent->user->name
+        ]
+    @endphp
+@endforeach
+<div class="max-w-[100vw]">
+  <form action="{{ route('factory.post_transfer_prod_to_agent') }}" method="POST" class="w-[500px] max-w-full flex flex-col mx-auto gap-5 p-5 rounded-lg shadow-lg">
+      @csrf
+      
+      @include('components.input', ['name' => 'quantity_prod', 'label' => 'số lượng'])
+      @include('components.input_select', ['name' => 'range', 'label' => 'dòng sản phẩm', 'options' => $range_options])
+      @include('components.input_select', ['name' => 'agent', 'label' => 'đại lý', 'options' => $agent_options])
+      @include('components.button_submit', ['text' => 'xuất kho'])
+  </form>
 </div>
-
 @endsection

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Users;
 use App\Events\CreateNotifiEvent;
 use App\Exports\ExcelsExport;
 use App\Http\Controllers\Controller;
+use App\Models\Batch;
 use App\Models\Notification;
 use App\Models\Product;
 use App\Models\Range;
@@ -62,7 +63,7 @@ class AdminController extends Controller
                     foreach ($users as $user) {
                         $notification->users()->attach($user->id);
                         broadcast(new CreateNotifiEvent(['user_id' => $user->id, 'notification' => $notification, 'time' => $notification->created_at->toDateTimeString()]));
-                    }   
+                    }
                 } else {
                     $notification->users()->attach($id);
                     broadcast(new CreateNotifiEvent(['user_id' => $id, 'notification' => $notification, 'time' => $notification->created_at->toDateTimeString()]));
@@ -200,123 +201,58 @@ class AdminController extends Controller
     }
 
 
-    public function show_batches_recall() {
+    public function show_batches_recall()
+    {
 
         $users = User::all();
-        $batches_id = DB::table('products')->select('batch_id')
-                        ->where('is_recall', 1) 
-                        ->groupBy('batch_id')
-                        ->get();
-        $batches = [];
-        foreach($batches_id as $id) {
-            $batches[] = DB::table('batches')->where('id', $id->batch_id)->first();
-        }
-
+        $batches = Batch::get_recall();
         return view('admin.show_batches_recall', ['users' => $users, 'batches' => $batches]);
     }
 
-    public function new_batch_recall(Request $request) {
+    public function new_batch_recall(Request $request)
+    {
         $users = User::all();
-        $batch_id = DB::table('products')->select('batch_id')->where('is_recall', 0)->groupBy('batch_id')->get();
-        return view('admin.new_batch_recall', ['users' => $users, 'batch_id'=>$batch_id]);
+        $batches = Batch::get_recall(0);
+        return view('admin.new_batch_recall', ['users' => $users, 'batches' => $batches]);
     }
 
-    public function post_new_batch_recall(Request $request) {
+    public function post_new_batch_recall(Request $request)
+    {
         $request->validate(
             [
-                'batch_id'=>'required|gt:0',
+                'batch_id' => 'required|gt:0',
             ],
             [
-                'batch_id.required'=>'Vui lòng nhập trường này',
-                'batch_id.gt'=>'Vui lòng nhập đúng định dạng'
+                'batch_id.required' => 'Vui lòng nhập trường này',
+                'batch_id.gt' => 'Vui lòng nhập đúng định dạng'
             ]
         );
 
         $check_batch_exist = DB::table('batches')->where('id', $request->input('batch_id'))->first();
-        if(!$check_batch_exist) {
-            return redirect()->back()->with(['message'=> 'Không tồn tại lô hàng này']);
+        if (!$check_batch_exist) {
+            return redirect()->back()->with(['message' => 'Không tồn tại lô hàng này']);
         }
 
         $check_is_recall = (DB::table('products')->where('batch_id', $request->input('batch_id'))->first())->is_recall;
-        
-        if($check_is_recall) {
-            return redirect()->back()->with(['message'=> 'Lô hàng đã được thu hồi']);
+
+        if ($check_is_recall) {
+            return redirect()->back()->with(['message' => 'Lô hàng đã được thu hồi']);
         }
 
         $message = Warranty::product_recall($request->input('batch_id'));
 
-        return redirect()->back()->with(['message'=> $message]);
+        return redirect()->back()->with(['message' => $message]);
     }
 
-    public function return_batch_recall($id) {
-        $message = Warranty::return_product_recall($id);
-
-        return redirect()->back()->with(['message'=> $message]);
+    public function return_batch_recall(Request $request)
+    {
+        $message = Warranty::return_product_recall($request->batch_id);
+        return response()->json(['message' => $message]);
     }
 
-    public function show_account() {
+    public function show_account()
+    {
         $users = User::all();
-        $accounts = DB::table('users')->get();
-        $roles = [];
-        $addresses = [];
-
-        foreach($accounts as $account) {
-            $roles[$account->id] = (DB::table('roles')->where('id', $account->role_id)->first())->name;
-            $address = DB::table('addresses')->where('id', $account->address_id)->first();
-            $addresses[$account->id] = 'Tỉnh '. $address->province . ' - Huyện '. $address->district . ' - Xã '. $address->sub_district;
-            
-        }
-        
-        return view('admin.show_account', compact('users', 'accounts', 'roles', 'addresses'));
-    }
-
-    public function show_product() {
-        $users = User::all();
-        $products = DB::table('products')->get();
-        $agents = [];
-        $factories = [];
-        $warranties = [];
-        $customers = [];
-        $status = [];
-        $ranges = [];
-        $out_of_warranty = []; 
-
-        foreach($products as $product) {
-            $factories[$product->id] = (DB::table('users')->where('id', $product->factory_id)->first())->name;
-            $agent = DB::table('users')->where('id', $product->agent_id)->first();
-            $customer = DB::table('users')->where('id', $product->customer_id)->first();
-            $warranty = DB::table('users')->where('id', $product->warranty_id)->first();
-            
-            if($agent) {
-                $agents[$product->id] = (DB::table('users')->where('id', $product->agent_id)->first())->name;
-            } else {
-                $agents[$product->id] = '';
-            }
-
-            if($warranty) {
-                $warranties[$product->id] = (DB::table('users')->where('id', $product->warranty_id)->first())->name;
-            } else {
-                $warranties[$product->id] = '';
-            }
-
-            if($customer) {
-                $customers[$product->id] = (DB::table('users')->where('id', $product->customer_id)->first())->name;
-            } else {
-                $customers[$product->id] = '';
-            }
-            
-            $ranges[$product->id] = (DB::table('ranges')->where('id', $product->range_id)->first())->name;
-            $status[$product->id] = (DB::table('statuses')->where('id', $product->status_id)->first())->name;
-        
-            if($product->out_of_warranty == 1) {
-                $out_of_warranty[$product->id] = 'Hết hạn bảo hành';
-            } else if($product -> out_of_warranty == 0 && $product->customer_id == null) {
-                $out_of_warranty[$product->id] = 'Chưa bán';
-            } else if($product -> out_of_warranty == 0 && $product->customer_id != null) {
-                $out_of_warranty[$product->id] = 'Còn hạn bảo hành';
-            }
-        }
-        
-        return view('admin.show_product', compact('users', 'products', 'agents', 'factories', 'warranties', 'customers', 'ranges', 'status', 'out_of_warranty'));
+        return view('admin.show_account', ['users' => $users]);
     }
 }

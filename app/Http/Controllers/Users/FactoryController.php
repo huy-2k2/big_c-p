@@ -16,81 +16,79 @@ use App\Models\WarrantyProduct;
 use Carbon\Carbon;
 use App\Exports\ExcelsExport;
 use App\Events\CreateNotifiEvent;
+use App\Models\Agent;
+use App\Models\Depot;
 use App\Models\Notification;
 
 class FactoryController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(['author:factory']);
-    }
 
     public function index()
     {
-        return view('factory.main');
+        return redirect()->route('factory.depot_product');
     }
 
-    public function create_batch() {
-        $ranges = DB::table('ranges')->get();
-        $depots = DB::table('depots')->where('owner_id', Auth::user()->id)->get();
-        
+    public function create_batch()
+    {
+        $ranges = Range::all();
+        $depots = Depot::where('owner_id', Auth::user()->id)->get();
         return view('factory.create_batch', compact('ranges', 'depots'));
     }
 
-    public function create_batch_post(Request $request) {
+    public function create_batch_post(Request $request)
+    {
         $temp = BatchController::create_batch($request, Auth::user()->id);
-        if(!$temp) {
-            return redirect()->route('factory.depot_product') ->with(['message' => 'Kho không đủ chỗ trống, vui lòng kiểm tra lại']);
+        if (!$temp) {
+            return redirect()->route('factory.depot_product')->with(['error' => 'Kho không đủ chỗ trống, vui lòng kiểm tra lại']);
         } else {
-            return redirect()->route('factory.depot_product') ->with(['message' => 'Tạo lô thành công']);
+            return redirect()->route('factory.depot_product')->with(['message' => 'Tạo lô thành công']);
         }
     }
 
     //depot
-    public function factory_depots() {
+    public function factory_depots()
+    {
         $depots = DepotController::get_all_depots(Auth::user()->id);
-    
         return view('factory.factory_depots', compact('depots'));
     }
 
-    public function add_factory_depot() {
+    public function add_factory_depot()
+    {
         return view('factory.add_factory_depot');
     }
 
-    public function post_add_factory_depot(Request $request) {
+    public function post_add_factory_depot(Request $request)
+    {
         DepotController::add_depot($request, Auth::user()->id);
 
         return redirect()->route('factory.factory_depots')->with(['message' => 'Tạo kho thành công']);
     }
 
-    public function delete_factory_depot($id) {
-        DepotController::delete_depot($id); 
-        return redirect()->route('factory.factory_depots')->with(['message' => 'Xóa kho thành công']);
+    public function put_edit_factory_depot(Request $request)
+    {
+        DepotController::edit_depot($request);
+
+        return response()->json(true);
     }
 
-    public function edit_factory_depot($id) {
-        $depot_edit = DB::table('depots')->where('id', '=', $id)->get()->first();
-        if($depot_edit) {
-            return view('factory.edit_factory_depot', compact('depot_edit'));
-        } else {
-            return redirect()->route('factory.factory_depots')->with(['message' => 'Không tồn tại']);
+    public function depot_product()
+    {
+        $ranges = Range::all();
+        $depots = Depot::where('owner_id', Auth::user()->id)->get();
+        $results = [];
+        foreach ($depots as $depot) {
+            foreach ($ranges as $range) {
+                $count_product = Product::count_quantity_product(['range_id', 'depot_id', 'status_id', 'is_recall'], [$range->id, $depot->id, 1, 0]);
+                $count_products = Product::count_quantity_product(['depot_id', 'status_id'], [$depot->id, 1]);
+                if ($count_product)
+                    $results[] = ['range' => $range, 'depot' => $depot, 'quantity' => $count_product, 'available' => $count_products];
+            }
         }
+        return view('factory.depot_product', compact('results'));
     }
 
-    public function put_edit_factory_depot($id, Request $request) {
-        DepotController::edit_depot($id, $request); 
-
-        return redirect()->route('factory.factory_depots')->with(['message' => 'Chỉnh sửa thành công']);
-    }
-
-    public function depot_product() {
-        $lines = DB::table('ranges')->get();
-        $depots = DB::table('depots')->where('owner_id', '=', Auth::user()->id)->get();
-        
-        return view('factory.depot_product', compact('lines', 'depots'));
-    }
-
-    public static function create_notifi_to_agent($title, $content, $agent_id) {
+    public static function create_notifi_to_agent($title, $content, $agent_id)
+    {
         $notification = Notification::create([
             'title' => $title,
             'content' => $content
@@ -98,36 +96,37 @@ class FactoryController extends Controller
 
         $notification->users()->attach($agent_id);
         broadcast(new CreateNotifiEvent(['user_id' => $agent_id, 'notification' => $notification, 'time' => $notification->created_at->toDateTimeString()]));
-        
+
         return redirect()->back()->with(['message' => 'tạo thông báo thành công']);
     }
 
-    public function transfer_prod_to_agent() {
-        $lines = DB::table('ranges')->get();
-        $agents = DB::table('agents')->get();
-        return view('factory.transfer_prod_to_agent', compact('lines', 'agents'));
+    public function transfer_prod_to_agent()
+    {
+        $ranges = Range::all();
+        $agents = Agent::all();
+        return view('factory.transfer_prod_to_agent', compact('ranges', 'agents'));
     }
 
-    public function post_transfer_prod_to_agent(Request $request) {
+    public function post_transfer_prod_to_agent(Request $request)
+    {
         $request->validate(
             [
-                'quantity_prod'=>'required|gt:0',
-                'range'=>'required|gte:0',
-                'agent'=>'required|gte:0',
+                'quantity_prod' => 'required|gt:0',
+                'range' => 'required|gte:0',
+                'agent' => 'required|gte:0',
             ],
             [
-                'range.required'=>'Vui lòng nhập trường này',
-                'quantity_prod.required'=>'Vui lòng nhập trường này',
-                'agent.required'=>'Vui lòng nhập trường này',
-                'range.gte'=>'Vui lòng nhập đúng',
-                'quantity_prod.gt'=>'Số lượng phải lớn hơn 0',
-                'agent.gte'=>'Vui lòng nhập đúng',
+                'range.required' => 'Vui lòng nhập trường này',
+                'quantity_prod.required' => 'Vui lòng nhập trường này',
+                'agent.required' => 'Vui lòng nhập trường này',
+                'range.gte' => 'Vui lòng nhập đúng',
+                'quantity_prod.gt' => 'Số lượng phải lớn hơn 0',
+                'agent.gte' => 'Vui lòng nhập đúng',
             ]
         );
-        
-        $count_prod_in_depot = Product::count_quantity_product(['range_id', 'factory_id', 'status_id', 'is_recall'], [$request->input('range'), Auth::user() -> id, 1, 0]);
-        if($count_prod_in_depot >= $request->input('quantity_prod')) {
-            $all_prod_in_depot = Product::get_product(['range_id', 'factory_id', 'status_id', 'is_recall'], [$request->input('range'), Auth::user() -> id, 1, 0]);
+        $count_prod_in_depot = Product::count_quantity_product(['range_id', 'factory_id', 'status_id', 'is_recall'], [$request->input('range'), Auth::user()->id, 1, 0]);
+        if ($count_prod_in_depot >= $request->input('quantity_prod')) {
+            $all_prod_in_depot = Product::get_product(['range_id', 'factory_id', 'status_id', 'is_recall'], [$request->input('range'), Auth::user()->id, 1, 0]);
             $i = 0;
             $transfer_batch = ($all_prod_in_depot->first())->id;
 
@@ -135,21 +134,21 @@ class FactoryController extends Controller
             $content = 'Nhà máy ' . Auth::user()->name . ' đã xuất ' . $request->input('quantity_prod') . ' sản phẩm dòng ' . $range_name . ' cho bạn';
             $factory_function = new FactoryController();
             $factory_function::create_notifi_to_agent('Nhận được sản phẩm từ nhà máy', $content, $request->input('agent')); //cần sửa
-            
-            foreach($all_prod_in_depot as $prod) {
-                
-                if ($i == $request->input('quantity_prod')) { 
+
+            foreach ($all_prod_in_depot as $prod) {
+
+                if ($i == $request->input('quantity_prod')) {
                     return redirect()->route('factory.transfer_prod_to_agent')->with(['message' => 'xuất thành công']);
                 }
 
                 $i++;
-                
-                DB::table('waiting_products') -> insert([
+
+                DB::table('waiting_products')->insert([
                     'product_id' => $prod->id,
                     'agent_id' => $request->input('agent'),
                     'range_id' => $request->input('range'),
                     'transfer_batch' => $transfer_batch,
-                    'status' => 0, 
+                    'status' => 0,
                     'created_at' => Carbon::now(),
                 ]);
                 DB::table('products')->where('id', $prod->id)->update([
@@ -160,9 +159,9 @@ class FactoryController extends Controller
                 ]);
             }
 
-            return redirect() -> back() -> with(['message' => 'Chuyển kho thành công']);
+            return redirect()->back()->with(['message' => 'Chuyển kho thành công']);
         } else {
-            return redirect() -> back() -> with(['message' => 'Số lượng hàng tồn kho không đủ !!!']);
+            return redirect()->back()->with(['error' => 'Số lượng hàng tồn kho không đủ !!!']);
         }
     }
 
@@ -257,7 +256,8 @@ class FactoryController extends Controller
         return view('factory.product_sales_statistic', ['statuses' => Status::all()]);
     }
 
-    public function print_product_sales_statistic(Request $request) {
+    public function print_product_sales_statistic(Request $request)
+    {
         $list_products = [];
         $data_inputs = $request->all();
         unset($data_inputs['_token']);
@@ -336,7 +336,7 @@ class FactoryController extends Controller
             }
         }
         $excel->setSheets($list_products);
-        $excel->setHeadings( ['Id', 'Status', 'Name', 'Property', 'Factory', 'Agent', 'Customer buy time']);
+        $excel->setHeadings(['Id', 'Status', 'Name', 'Property', 'Factory', 'Agent', 'Customer buy time']);
         return $excel->download('product_sales_factory.xlsx');
     }
 

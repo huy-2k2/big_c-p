@@ -291,6 +291,18 @@
                 .listen('CreateNotifiEvent', handle_notifi_created)
             })
             })();
+            
+            function handle_remove_submited(element)  {
+                const table_body = document.querySelector('tbody')
+                const id = element.getAttribute('data-id')
+                table_body.removeChild(element.parentElement)
+                const stt_users = document.querySelectorAll('.stt');
+                console.log(stt_users);
+                stt_users.forEach(stt => {
+                    if(stt.getAttribute('data-id') > id)
+                        stt.innerText -= 1
+                })
+            }
     </script>
    
 @endsection
