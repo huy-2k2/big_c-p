@@ -22,7 +22,7 @@
     <script>
         (() => {
             const alter_product_line_btns = document.querySelectorAll('.alter_product_line_btn')
-            const refresh_product_line_btns = document.querySelectorAll('.refresh_product_line_btn')
+            const refresh_product_line_btns = document.querySelectorAll('.refresh_btn')
             const product_line_inputs = document.querySelectorAll('.product_line-input');
             product_line_inputs.forEach(input => {
                 input.onkeyup = function() {
@@ -31,12 +31,9 @@
                     const period = document.querySelector(`.product_line-period-${id}`)
                     const property = document.querySelector(`.product_line-property-${id}`)
                     const refresh_btn = document.querySelector(`.refresh_product_line-${id}`)
-                    console.log(name.value, period.value, property.innerText);
                     if(name.value == name.getAttribute('data-origin') && period.value == period.getAttribute('data-origin') && property.innerText == property.getAttribute('data-origin')) {
-                        console.log(123);
                         refresh_btn.classList.remove('active')
                     } else {
-                        console.log(456);
                         refresh_btn.classList.add('active')
                     }
                 }

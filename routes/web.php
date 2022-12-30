@@ -64,7 +64,10 @@ Route::group(['middleware' => ['auth', 'verified', 'accepted', 'token']], functi
 
         Route::get('statistic', [FactoryController::class, 'product_statistic'])->name('product_statistic');
         Route::post('print_statistic', [FactoryController::class, 'print_product_statistic'])->name('print_statistic');
-
+        Route::get('statistic_defective', [FactoryController::class, 'product_statistic_defective'])
+            ->name('product_statistic_defective');
+        Route::post('print_statistic_defective', [FactoryController::class, 'print_product_statistic_defective'])
+            ->name('print_statistic_defective');
         Route::get('sales_statistic', [FactoryController::class, 'product_sales_statistic'])
             ->name('product_sales_statistic');
         Route::post('print_sales_statistic', [FactoryController::class, 'print_product_sales_statistic'])
@@ -81,16 +84,12 @@ Route::group(['middleware' => ['auth', 'verified', 'accepted', 'token']], functi
     Route::name('warranty.')->prefix('warranty')->middleware(['author:warranty'])->group(function () {
         Route::get('/', [WarrantyController::class, 'index']);
         Route::get('/show_product', [WarrantyController::class, 'show_product'])->name('show_product');
-        Route::get('/return_prod_to_agent/{id}', [WarrantyController::class, 'return_prod_to_agent'])->name('return_prod_to_agent');
-        Route::get('/return_prod_to_factory/{id}', [WarrantyController::class, 'return_prod_to_factory'])->name('return_prod_to_factory');
 
         Route::get('/statistic', [WarrantyController::class, 'product_statistic'])->name('product_statistic');
         Route::post('/print_statistic', [WarrantyController::class, 'print_product_statistic'])->name('print_statistic');
-
     });
-
     Route::name('customer.')->prefix('customer')->middleware(['author:customer'])->group(function () {
-        Route::get('/', [CustomerController::class, 'index']);
+        Route::get('/', [CustomerController::class, 'index'])->name('index');
         Route::get('/show_product', [CustomerController::class, 'show_product'])->name('show_product');
         Route::get('/warranty_claim/{id}', [CustomerController::class, 'warranty_claim'])->name('warranty_claim');
         Route::post('/send_warranty_claim', [CustomerController::class, 'send_warranty_claim'])->name('send_warranty_claim');

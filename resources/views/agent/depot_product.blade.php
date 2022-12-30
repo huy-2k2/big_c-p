@@ -13,7 +13,7 @@
         ]
     @endphp
 @endforeach
-<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+<div class="relative overflow-x-auto shadow-md sm:rounded-lg custom-scrollbar">
   @include('components.table', ['title' => 'số lượng sản phẩm', 'ths' => ['tên kho',  'tên dòng sản phẩm', 'số lượng','số lượng kho trống'], 'tbody' => $tbody])
 </div>
 @endsection

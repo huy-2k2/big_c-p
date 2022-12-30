@@ -25,7 +25,7 @@ class AgentController extends Controller
 {
     public function index()
     {
-        return view('agent.main');
+        return redirect()->route('agent.depot_product');
     }
 
     public function depot_product()
@@ -156,11 +156,11 @@ class AgentController extends Controller
         $range_name = (DB::table('ranges')->where('id', $product->range_id)->first())->name;
 
         if ($product->status_id != 2 || $product->agent_id != Auth::user()->id) {
-            return redirect()->back()->with(['message' => 'Sản phẩm không có trong kho']);
+            return redirect()->back()->with(['error' => 'Sản phẩm không có trong kho']);
         }
 
         if ($product->is_recall == 1) {
-            return redirect()->back()->with(['message' => 'Sản phẩm đang được thu hồi']);
+            return redirect()->back()->with(['error' => 'Sản phẩm đang được thu hồi']);
         }
 
         return view('agent.check_sell_to_customer', compact('customer', 'product', 'address_customer', 'range_name'));
@@ -188,30 +188,27 @@ class AgentController extends Controller
                 'warranty_id' => 'required|gt:0',
                 'product_id' => 'required|gt:0',
             ],
-            [
-                'product_id.required' => 'Vui lòng nhập trường này',
-                'warranty_id.required' => 'Vui lòng nhập trường này',
-                'product_id.gt' => 'Vui lòng nhập đúng định dạng',
-                'warranty_id.gt' => 'Vui lòng nhập đúng định dạng',
-            ]
         );
 
         $check_product = Product::check_product_exist($request->input('product_id'));
         $check_warranty = Warranty::check_warranty_exist($request->input('warranty_id'));
 
         if (!$check_warranty || !$check_product) {
-            return redirect()->back()->with(['message' => 'Trung tâm bảo hành hoặc sản phẩm không tồn tại. Vui lòng kiểm tra lại !!!']);
+            // return redirect()->back()->with(['message' => 'Trung tâm bảo hành hoặc sản phẩm không tồn tại. Vui lòng kiểm tra lại !!!']);
+            return response()->json(['type' => 'error', 'message' => 'trung tâm bảo hành không tồn tại']);
         }
 
         $warranty = DB::table('users')->where('id', $request->input('warranty_id'))->first();
         $product = DB::table('products')->where('id', $request->input('product_id'))->first();
 
-        if ($product->status_id != 4 || $product->agent_id != Auth::user()->id || $product->is_recall == 1) {
-            return redirect()->back()->with(['message' => 'Không thấy sản phẩm, vui lòng liên hệ với quản trị viên !!!']);
+        if ($product->status_id != 4 || $product->agent_id != $request->user_id || $product->is_recall == 1) {
+            // return redirect()->back()->with(['message' => 'Không thấy sản phẩm, vui lòng liên hệ với quản trị viên !!!']);
+            return response()->json(['type' => 'error', 'message' => 'không tìm thấy sản phẩm']);
         }
 
-        $message = Product::transfer_product(Auth::user()->id, $request->input('warranty_id'), $product->id, 5);
-        return redirect()->back()->with(['message' => $message]);
+        Product::transfer_product($request->user_id, $request->input('warranty_id'), $product->id, 5);
+        // return redirect()->back()->with(['type' => 'success', 'message' => 'đã đến trung tâm bảo hành']);
+        return response()->json(['type' => 'success', 'message' => 'chuyển sản phẩm thành công']);
     }
 
     public function transfer_error_prod_return_to_customer(Request $request)
@@ -220,26 +217,22 @@ class AgentController extends Controller
             [
                 'product_id' => 'required|gt:0',
             ],
-            [
-                'product_id.required' => 'Vui lòng nhập trường này',
-                'product_id.gt' => 'Vui lòng nhập đúng định dạng',
-            ]
         );
 
         $check_product = Product::check_product_exist($request->input('product_id'));
 
         if (!$check_product) {
-            return redirect()->back()->with(['message' => 'Sản phẩm không tồn tại. Vui lòng kiểm tra lại !!!']);
+            return response()->json(['type' => 'error', 'message' => 'sản phẩm không tồn tại']);
         }
 
         $product = DB::table('products')->where('id', $request->input('product_id'))->first();
 
-        if ($product->status_id != 7 || $product->agent_id != Auth::user()->id || $product->is_recall == 1) {
-            return redirect()->back()->with(['message' => 'Không thấy sản phẩm, vui lòng liên hệ với quản trị viên !!!']);
+        if ($product->status_id != 7 || $product->agent_id != $request->user_id || $product->is_recall == 1) {
+            return response()->json(['type' => 'error', 'message' => 'sản phẩm không tồn tại']);
         }
 
-        $message = Product::transfer_product(Auth::user()->id, $product->customer_id, $product->id, 3, ['return_prod' => 'Trả lại sản phẩm cho người dùng']);
-        return redirect()->back()->with(['message' => $message]);
+        Product::transfer_product($request->user_id, $product->customer_id, $product->id, 3, ['return_prod' => 'Trả lại sản phẩm cho người dùng']);
+        return response()->json(['type' => 'success', 'message' => 'trả sản phẩm thành công']);
     }
 
     public function agent_depots()

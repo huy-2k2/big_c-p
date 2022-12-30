@@ -83,7 +83,7 @@
         
     @endphp
 @endforeach
-<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+<div class="relative overflow-x-auto shadow-md sm:rounded-lg custom-scrollbar">
   @include('components.table', ['title' => 'xuất kho', 'ths' => ['số lô',  'tên dòng sản phẩm', 'số lượng','ngày nhập', 'chọn kho nhập', 'chọn số lượng', ['title' => 'nhập kho', 'sr_only' => true]], 'tbody' => $tbody])
 </div>
 <script>
