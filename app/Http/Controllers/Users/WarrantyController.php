@@ -24,7 +24,7 @@ class WarrantyController extends Controller
 {
     public function index()
     {
-        return view('warranty.main');
+        return redirect()->route('warranty.show_product');
     }
 
     public function show_product()

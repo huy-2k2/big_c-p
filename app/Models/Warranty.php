@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 class Warranty extends Model
 {
     use HasFactory;
-    protected $fillable = ['id'];
+    protected $fillable = ['user_id'];
 
     public function product()
     {

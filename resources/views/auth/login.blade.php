@@ -9,7 +9,7 @@
            
         @include('components.button_submit', ['text' => 'Đăng nhập'])
         <div class="flex flex-wrap items-center justify-between">
-            @include('components.input_checkbox', ['name' => 'remember', 'label' => 'nhớ mật khẩu'])
+            @include('components.input_checkbox', ['name' => 'remember', 'label' => 'nhớ mật khẩu', 'input_value' => 'remember'])
             @if (Route::has('password.request'))
                @include('components.link', ['href' => route('password.request'), 'text' => 'quên mật khẩu?'])
             @endif

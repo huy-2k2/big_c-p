@@ -9,7 +9,7 @@ use App\Models;
 class Agent extends Model
 {
     use HasFactory;
-    protected $fillable = ['user'];
+    protected $fillable = ['user_id'];
 
     public function user()
     {
